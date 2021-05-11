@@ -16,5 +16,3 @@ class Blockchain:
         # Si l'id est un des pending on crée une disjonction (si le hash coincide avec l'avant de la chaine)
         pass
 
-
-print 'test'
