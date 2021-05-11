@@ -2,7 +2,7 @@ class Miner:
     blockchain = ""
     
     def __init__(self):
-        print "MODIF"
+        print "MODIF43T535353TTT"
 
 
 
