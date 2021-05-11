@@ -3,6 +3,7 @@ class Miner:
     
     def __init__(self):
         print "MODIF"
+        print "DQZDIUQZDIZ"
 
 
 
