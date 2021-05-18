@@ -1,22 +1,18 @@
 class Person:
     
-    staticLastId = 0
-
-    id = 0
-    name = ""
-    dob = ""
-    hospital = ""
-    medicalHistory = []
+    staticLastPersonId = 0
      
     def __init__(self, name, dob, hospital):
-        self.id = staticLastId
+        self.personId = staticLastPersonId
         staticLastId += 1
+
         self.name = name
         self.dob = dob
         self.hospital = hospital
         self.medicalHistory = []
 
-
+    
+    
 
 
 

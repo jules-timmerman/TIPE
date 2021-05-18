@@ -15,5 +15,3 @@ class Blockchain:
         # Si l'id est un dans les blocs valides si le hash est pas bon alors on rejette
         # Si l'id est un des pending on crée une disjonction (si le hash coincide avec l'avant de la chaine)
         pass
-
-print 'test'
