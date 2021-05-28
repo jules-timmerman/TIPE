@@ -27,7 +27,7 @@ class Blockchain:
             if len(val) < maxLength and lengthSecond < len(val) : # On augmente la valeur de la longeur de la 2ème liste si elle est inférieur à maxLength
                     lengthSecond = len(val)                       # et si la longueur de la 2ème liste est inférieur à len(val)
         if compteur == 0 and maxLength > (lengthSecond + 5) :       
-            self.validBlocks += self.alternateFollowingChains[posFirst][:-5]    #On ne rajoute des blocks que lorsqu'on a suffisamment d'éléments par rapport aux autres chaînes et on pas de doublons
+            self.validBlocks += self.alternateFollowingChains[posFirst][:-5]    # On ne rajoute des blocks que lorsqu'on a suffisamment d'éléments par rapport aux autres chaînes et on pas de doublons
 
 
 
