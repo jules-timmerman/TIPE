@@ -6,12 +6,12 @@ class Blockchain:
         # On va mettre toutes la blockchain dedans pour faciliter les comparaisons de taille
         self.alternateFollowingChains = [[]]   
 
-    def  alreadyInAlternate(l,self) :
+    def  alreadyInAlternate(self,l) :
         for liste in self.alternateFollowingChains :
-            if liste == liste :
+            if liste == l :
                 return True
-            else :
-                return False
+        else :          
+            return False
 
     def chainUpdate(self) :
         compteur = 0            # Compteur du nombre de liste ayant la même longeur que la liste la plus longue
@@ -19,7 +19,7 @@ class Blockchain:
         maxLength = 0
         posFirst = 0
         for (i,val) in enumerate(self.alternateFollowingChains) :
-            if len(val) > maxLength :              # Si une liste est plus longue que celle ocnnue
+            if len(val) > maxLength :              # Si une liste est plus longue que celle connue
                 posFirst = i                      
                 compteur = 0                       # On reset le compteur du nombre de la liste de même longeur que la plus longue 
                 maxLength = len(val)                
