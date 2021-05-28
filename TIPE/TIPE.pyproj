@@ -24,6 +24,9 @@
     <Compile Include="Blockchain.py">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Hopital.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Maladie.py">
       <SubType>Code</SubType>
     </Compile>
@@ -45,7 +48,8 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="listMaladie.txt" />
+    <Content Include="listeHopital.txt" />
+    <Content Include="listeMaladie.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.targets" />
   <!-- Uncomment the CoreCompile target to enable the Build command in
