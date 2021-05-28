@@ -5,3 +5,8 @@ class Blockchain:
         # Contient différentes alternatives de blockchain 
         # On va mettre toutes la blockchain dedans pour faciliter les comparaisons de taille
         self.alternateFollowingChains = [[]]   
+
+    def updateChain(self):  # Nettoie alternate pour agrandir valid
+        lValid = len(validBlocks)
+        lAlternate = len(self.alternateFolloingChains)
+        

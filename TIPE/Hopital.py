@@ -12,5 +12,5 @@ class Hopital:
         for line in f:
             sp = line.split("|")
             if sp[0] == name:
-                return split[1]
+                return sp[1]
         return "-1"
