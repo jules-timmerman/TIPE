@@ -1,7 +1,7 @@
 class Blockchain:
     validBlocks = []
     alternateFollowingChains = [[]] # Contain different potential sequence of the current valid chain (the longest wins)
-     
+    
     def __init__(self):
         self.validBlocks = []
         self.alternateFollowingChains = [[]]

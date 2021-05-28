@@ -9,7 +9,7 @@ class Person:
         self.name = name
         self.dob = dob
         self.hospital = hospital
-        self.medicalHistory = []
+        self.medicalHistory = []        # Tableau de maladie j'imagine ?
 
     
     
