@@ -9,9 +9,8 @@ class Blockchain:
     def  alreadyInAlternate(self,l) :
         for liste in self.alternateFollowingChains :
             if liste == l :
-                return True
-        else :          
-            return False
+                return True      
+        return False
 
     def chainUpdate(self) :
         compteur = 0            # Compteur du nombre de liste ayant la même longeur que la liste la plus longue
