@@ -21,7 +21,7 @@ class Blockchain:
                 if compteurSecond < len(val) :
                     compteurSecond = len(val)
         if compteurFirst == 0 and compteurFirst > (compteurSecond + 5) :
-            self.validBlocks += self.alternateFollowingChains[:-5]
+            self.validBlocks += self.alternateFollowingChains[compteurFirst][:-5]
 
 
 
