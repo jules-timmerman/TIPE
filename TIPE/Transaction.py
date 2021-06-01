@@ -7,3 +7,10 @@ class Transaction:
         self.newDate = newDate      # date à ajouter à la personne (que ce soit attrapée ou perdue)
         self.signature = signature  # Signature de la transaction
                                     # Ici par l'hopital et donc fait avec la clé privées
+    def toString(self):
+        s = ""
+        s += str(self.personId)
+        s += str(self.maladieId)
+        s += str(self.newDate)
+        s += str(self.signature)
+        return s

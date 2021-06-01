@@ -1,5 +1,8 @@
 class Blockchain:
     
+
+    N = 5 # Nombre de transactions par blocs (temporaire)
+
     def __init__(self):
         self.validBlocks = []        # blocs 100% sûr qui peuvent être pris en compte
         # Contient différentes alternatives de blockchain 
@@ -30,8 +33,10 @@ class Blockchain:
             self.validBlocks += self.alternateFollowingChains[posFirst][:-5]    # On ne rajoute des blocks que lorsqu'on a suffisamment d'éléments par rapport aux autres chaînes et on pas de doublons
 
 
+        def getLastValidBlock(self):
+            return self.validBlocks[-1]
 
-
+        
 
 
 
