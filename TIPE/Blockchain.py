@@ -39,24 +39,15 @@ class Blockchain:
 
     def addBlockToAlternateChain(self,block) :
         pos = block.blockId
-        if pos == 1 :
-            self.alternateFollowingChains += [block]
-        for val in self.alternateFollowingChains :
+        for (i,val) in enumerate(self.alternateFollowingChains) :
             if val[pos-1].hashBlock() == block.lbHash :
+                if val[pos: ] != [] :
+                    self.alternateFollowingChains += (val[ : pos-1] + [block])
+                else :
+                    self.alternateFollowingChains[i] = (val[ : pos-1] + [block] )
 
+    
 
-
-
-    def addBlockToAlternateChain2(self, block) : 
-        pos = block.blockId
-        compatibleIdList = []
-        for val in self.alternateFollowingChains :
-            if len(val) >= pos : 
-                compatibleIdList += val[:pos]
-        
-        for val in compatibleIdList :
-            if block.lbHash == val.hashBlock() :
-                
             
 
 
