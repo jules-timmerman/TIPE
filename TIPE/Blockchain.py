@@ -33,10 +33,31 @@ class Blockchain:
             self.validBlocks += self.alternateFollowingChains[posFirst][:-5]    # On ne rajoute des blocks que lorsqu'on a suffisamment d'éléments par rapport aux autres chaînes et on pas de doublons
 
 
-        def getLastValidBlock(self):
-            return self.validBlocks[-1]
+    def getLastValidBlock(self):
+        return self.validBlocks[-1]
 
+
+    def addBlockToAlternateChain(self,block) :
+        pos = block.blockId
+        if pos == 1 :
+            self.alternateFollowingChains += [block]
+        for val in self.alternateFollowingChains :
+            if val[pos-1].hashBlock() == block.lbHash :
+
+
+
+
+    def addBlockToAlternateChain2(self, block) : 
+        pos = block.blockId
+        compatibleIdList = []
+        for val in self.alternateFollowingChains :
+            if len(val) >= pos : 
+                compatibleIdList += val[:pos]
         
+        for val in compatibleIdList :
+            if block.lbHash == val.hashBlock() :
+                
+            
 
 
 
