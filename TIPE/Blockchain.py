@@ -30,7 +30,7 @@ class Blockchain:
             if len(val) < maxLength and lengthSecond < len(val) : # On augmente la valeur de la longeur de la 2ème liste si elle est inférieur à maxLength
                     lengthSecond = len(val)                       # et si la longueur de la 2ème liste est inférieur à len(val)
         if compteur == 0 and maxLength > (lengthSecond + 5) :       
-            self.validBlocks += self.alternateFollowingChains[posFirst][:-5]    # On ne rajoute des blocks que lorsqu'on a suffisamment d'éléments par rapport aux autres chaînes et on pas de doublons
+            self.validBlocks += self.alternateFollowingChains[posFirst][:-5]    # On ne rajoute des blocks que lorsqu'on a suffisamment d'éléments par rapport aux autres chaînes et qu'on pas de doublons
 
 
     def getLastValidBlock(self):
@@ -40,13 +40,13 @@ class Blockchain:
     def addBlockToAlternateChain(self,block) :
         pos = block.blockId
         for (i,val) in enumerate(self.alternateFollowingChains) :
-            if val[pos-1].hashBlock() == block.lbHash :
-                if val[pos: ] != [] :
-                    self.alternateFollowingChains += (val[ : pos-1] + [block])
+            if val[pos-1].hashBlock() == block.lbHash :                             # On ne garde que les chaînes dont l'id du dernier block correspond
+                if val[pos: ] != [] :                       
+                    self.alternateFollowingChains += [ val[ : pos-1] + [block]]      # S'il existe des éléments après la chaîne que l'on veut compléter on en créer une nouvelle
                 else :
-                    self.alternateFollowingChains[i] = (val[ : pos-1] + [block] )
+                    self.alternateFollowingChains[i] =  ( val[ : pos-1] + [block] )  # Sinon on modifie le block en rajoutant le block d'entrée
 
-    
+
 
             
 
