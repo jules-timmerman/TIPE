@@ -25,7 +25,7 @@ class Block:
         self.__sumTemp__ = toHash
 
     def hashBlock(self): # Calcul le hash d'un bloc
-		return hash(self.__sumTemp__, self.proofOfWork)
+        return hash(self.__sumTemp__, self.proofOfWork)
 
     def hashBlockWithPOW(self, pow):
         return hash(self.__sumTemp__, pow)

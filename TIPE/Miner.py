@@ -26,7 +26,8 @@ class Miner:
         blockTemp.proofOfWork = i
 
         # Il faut envoyer le bloc aled
-        self.send(blockTemp)
+        self.sendBlock(blockTemp)
 
-    def send(self, blockTemp): # Envoie le bloc au reste de réseau
+    def sendBlock(self, blockTemp): # Envoie le bloc au reste de réseau (A FAIRE PLUS TARD)
         pass
+
