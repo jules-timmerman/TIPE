@@ -30,6 +30,9 @@
     <Compile Include="Maladie.py">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="P2P.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Transaction.py">
       <SubType>Code</SubType>
     </Compile>

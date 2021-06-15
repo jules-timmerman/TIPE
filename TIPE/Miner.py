@@ -3,6 +3,13 @@ class Miner:
     def __init__(self):
         self.blockchain = Blockchain()
         self.transToBlock = []      # Liste de transactions à ajouter 
+        # Lancer ici un Thread avec une fonction qui va écouter le réseau et une fonction de callback (ici receivedData) 
+        # Gérer les connaissances des autres nodes
+
+    def receivedData(data): 
+        # Pour les data, on peut prendre une STR de la forme "command|parametre1/param2/param3..."
+
+        pass
 
     def addTransToBlock(self, trans):
         self.transToBlock += trans

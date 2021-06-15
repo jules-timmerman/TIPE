@@ -11,7 +11,7 @@ class Maladie:
         return len(self.dates) % 2 == 0
 
     def addDate(date):
-        dates += date
+        dates += [date]
 
     def getMalName(id) :
         f = open ('listeMaladie.txt' , 'r')

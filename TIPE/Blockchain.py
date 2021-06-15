@@ -31,7 +31,7 @@ class Blockchain:
             returnValue = self.alternateFollowingChains[posFirst][:-5]
             self.validBlocks += returnValue    # On ne rajoute des blocks que lorsqu'on a suffisamment d'éléments par rapport aux autres chaînes et qu'on pas de doublons
             self.alternateFollowingChains = [self.alternateFollowingChains[posFirst][-5:]]
-        return returnValue
+        return returnValue # Renvoie ce qui a été rajouté
 
 
     def getLastValidBlock(self):
