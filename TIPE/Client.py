@@ -5,7 +5,31 @@ class Client:
         self.listPerson = []            # Liste de Person
         # cf Miner pour le Thread etc...
 
+    def receivedData(data):
+        # Pour les data, on peut prendre une STR de la forme "command|parametre1/param2/param3..."
+        # Les demandes en respond sont potentiellement différentes voir comment gérer les réponses avec une bibliothèque
+        t = data.split("|")
+        command = t[0]
+        params = t[1].split("/")
+
+        if command == "getAllBlocks":   # Envoie l'entièreté de la blockchain au param1 
+            sendAllBlock(params[0])  
+        elif command == "respondAllBlocks":   # C'est la commande reçu après avoir fait getAllBlocks
+            pass
+        elif command == "getHospitals":
+            pass
+        elif command == "respondHospitals":
+            pass
+        elif command == "newBlock":
+            pass
+
+
+        
+
+
+
     def getAllChain(): # Ask peers for all the chain and compare using alternateFollowingChains
+        # Il va falloir choisir la meilleure blockchain parmi toutes celles reçu
         pass # cf P2P
 
     def getInfoAboutPerson(personId): # Renvoie un objet Person

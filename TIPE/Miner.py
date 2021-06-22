@@ -4,18 +4,42 @@ class Miner:
         self.blockchain = Blockchain()
         self.transToBlock = []      # Liste de transactions à ajouter 
         # Lancer ici un Thread avec une fonction qui va écouter le réseau et une fonction de callback (ici receivedData) 
+        # CF Asyncio
         # Gérer les connaissances des autres nodes
 
-    def receivedData(data): 
-        # Pour les data, on peut prendre une STR de la forme "command|parametre1/param2/param3..."
 
-        pass
+
+
+    def receivedData(data):  
+        # Pour les data, on peut prendre une STR de la forme "command|parametre1/param2/param3..."
+        # Les demandes en respond sont potentiellement différentes voir comment gérer les réponses avec une bibliothèque
+        t = data.split("|")
+        command = t[0]
+        params = t[1].split("/")
+
+        if command == "getAllBlocks":   # Envoie l'entièreté de la blockchain au param1 
+            sendAllBlock(params[0])  
+        elif command == "respondAllBlocks":   # C'est la commande reçu après avoir fait getAllBlocks
+            pass
+        elif command == "getHospitals":
+            pass
+        elif command == "respondHospitals":
+            pass
+        elif command == "newBlock":
+            pass
+
+
+        elif command == "blockTrans":
+            pass
 
     def addTransToBlock(self, trans):
         self.transToBlock += trans
         if len(transToBlock >= 5):
             self.block() # Peut-être mettre dans un Thread plutôt 
 
+    def sendAllBlock(ip): # Envoie à l'ip passé en parametre (en str)
+
+        pass
 
     def block(self): 
         lb = self.blockchain.getLastValidBlock() # Last Block
