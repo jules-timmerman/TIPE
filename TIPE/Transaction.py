@@ -1,5 +1,7 @@
+from hashlib import sha256
+
 class Transaction:
-    from hashlib import sha256
+    
 
     def __init__(self, personId, maladieId, newDate, clientId,signature = -1):
         self.personId = personId    # id de la personne liée à la transaction

@@ -1,3 +1,4 @@
+import Transaction
 import hashlib
 
 
@@ -31,6 +32,8 @@ class Block:
         return hash(self.__sumTemp__, pow)
 
     def blockToString (block):
+        # Caractéristiques du blocs séparé par des /
+        # Les différentes transactions par des @
         resStr = ""
         resStr += str(block.blockId) + "/"
         resStr += str(block.lbHash) + "/"

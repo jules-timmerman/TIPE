@@ -1,21 +1,24 @@
-import P2P
+from P2P import P2P
 import socket
+from Blockchain import Blockchain
 from Crypto.PublicKey import RSA
 from hashlib import sha256
 
 
 class Client:
     
+    refIP = "" # A REMPLIR AVEC LA FUTURE IP DU RASPBERRY EN GROS OU EN TOUT CAS D'UNE ENTITE DE REFERENCE QUI SERA TOUJOURS DANS LA CHAINE
+    refPort = -1
 
     idClient = 0
 
 
-    def __init__(self, port):
+    def __init__(self, port, firstIPs=[refIP], firstPorts=[refPort]): # firstIPs est un tableau de premiers pairs à qui se connecter idem firstPorts
         self.blockchain = Blockchain()
         self.listPerson = []  
         
-        idClient += 1
-        self.idClient = idClient
+        Client.idClient += 1
+        self.idClient = Client.idClient
         
         keyPair = RSA.generate(bits=1024)
 
@@ -23,35 +26,35 @@ class Client:
         self.privateKey = [keyPair.n, keyPair.d]
         
 
-        self.p2p = P2P(socket.gethostbyname(socket.gethostname()), port, receivedData)
-        
+        self.p2p = P2P(socket.gethostbyname(socket.gethostname()), port, self.receivedData)
+        #self.p2p = P2P("127.0.0.1", port, self.receivedData)
+        self.p2p.start()
 
-    def sendData(command, params): 
+        for i in range(len(firstIPs)):
+            self.p2p.connect_with_node(firstIPs[i], firstPorts[i])
+
+
+    def sendData(self, command, params): 
         """Envoie la commande à tout les pairs
         command: str avec la commande
         params: tableau de str avec les parametres"""
 
-        content = command + "|"
-        for p in params:
-            content += p
-            content += "/"
-        content = content[:-1] # On enlève le derniers /
+        contents = {"command": command, "params":params}
 
-        p2p.sendData(content)
+        self.p2p.sendData(contents)
         
 
 
-    def receivedData(content): 
+    def receivedData(self, contents): 
         # Pour les data, on peut prendre une STR de la forme "command|parametre1/param2/param3..."
         # Les demandes en respond sont potentiellement différentes voir comment gérer les réponses avec une bibliothèque
         
-        t = content.split("|")
-        command = t[0]
-        params = t[1].split("/")
+        command = contents["command"]
+        params = contents["params"]
 
         if command == "getAllBlocks":   # Envoie l'entièreté de la blockchain 
-            sendAllBlock()  
-        elif command == "receiveAllBlocks":   # C'est la commande reçu après avoir fait getAllBlocks
+            pass
+        elif command == "receiveAllBlocks":   # C'est la commande reçu après avoir fait getAllBlocks (avec donc les blocs)
             pass
         elif command == "getHospitals":
             pass
@@ -61,15 +64,6 @@ class Client:
             pass
 
 
-        
-
-
-
-    def getAllChain(): # Ask peers for all the chain and compare using alternateFollowingChains
-        # Il va falloir choisir la meilleure blockchain parmi toutes celles reçu
-        pass # cf P2P
-
-
 
     def getInfoAboutPerson(personId): # Renvoie un objet Person
         # Ca demande des infos au reste du réseau à propos de la personne
@@ -77,6 +71,7 @@ class Client:
 
 
     def parseBlock(self, block):
+        """Lit les transactions dans un bloc donné et met à jour la liste des personnes"""
         listTrans = block.transactions # Liste des transactions du blocs
         for trans in listTrans:
             persFound = False
@@ -112,15 +107,3 @@ class Client:
 
 
 
-
-
-
-    # Pour les envoie de transaction, la fonction devra envoyer 3 trucs :
-    # L'id du client qui l'a envoyé 
-    # La transaction :
-    # La signature :
-
-    # strTrans = transaction.transToString()
-    # La convertir en binaire 
-    # hash = int.from_bytes(sha256(bstrList).digest(), byteorder='big')
-    # signature = pow(hash, self.privateKey[1], self.privateKey[0])

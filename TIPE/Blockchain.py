@@ -1,3 +1,5 @@
+import Block
+
 class Blockchain:
     
 

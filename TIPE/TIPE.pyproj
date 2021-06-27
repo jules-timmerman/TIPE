@@ -4,7 +4,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>12ab278d-d99e-44fc-b3cf-639d1604d354</ProjectGuid>
     <ProjectHome>.</ProjectHome>
-    <StartupFile>jesepa.py</StartupFile>
+    <StartupFile>test.py</StartupFile>
     <SearchPath>
     </SearchPath>
     <WorkingDirectory>.</WorkingDirectory>
@@ -12,6 +12,7 @@
     <Name>TIPE</Name>
     <RootNamespace>TIPE</RootNamespace>
     <InterpreterId>Global|PythonCore|3.9</InterpreterId>
+    <IsWindowsApplication>False</IsWindowsApplication>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
     <DebugSymbols>true</DebugSymbols>
@@ -25,10 +26,10 @@
     <Compile Include="Blockchain.py">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Hopital.py">
+    <Compile Include="Maladie.py">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Maladie.py">
+    <Compile Include="test.py">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="P2P.py">
@@ -46,7 +47,6 @@
     <Compile Include="Person.py">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="jesepa.py" />
     <Compile Include="Block.py">
       <SubType>Code</SubType>
     </Compile>
