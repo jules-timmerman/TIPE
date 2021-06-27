@@ -32,21 +32,27 @@ class Block:
 
     def blockToString (block):
         resStr = ""
-        n = len(block) - 1
-        i = 0
+        resStr += str(block.blockId) + "/"
+        resStr += str(block.lbHash) + "/"
+        resStr += str(block.proofOfWork) + "/"
 
-        while i != n :
-            transStr = block[i].transToString()
-            resStr += transStr
-            resStr += "/"
-            i += 1
+        for trans in block.transactions :
+            aux = trans.transToString
+            resStr += aux + '@'
+        resStr = resStr[:-1] + "/"
+            
+        resStr += str(block.__sumTemp__) 
+
         
-        transStr = block[n].transToString()
-        resStr += transStr
-        
-        return resStr
+
+
+
+
+
             
     def stringToBlock (string) :
-        
+        aux = string.spli("/")
+
+
 
 
