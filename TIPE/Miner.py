@@ -13,10 +13,10 @@ class Miner:
 
 
 
-    def receivedData(data):  
+    def receivedData(content):  
         # Pour les data, on peut prendre une STR de la forme "command|parametre1/param2/param3..."
         # Les demandes en respond sont potentiellement différentes voir comment gérer les réponses avec une bibliothèque
-        t = data.split("|")
+        t = content.split("|")
         command = t[0]
         params = t[1].split("/")
 
