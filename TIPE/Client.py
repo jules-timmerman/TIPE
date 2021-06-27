@@ -105,5 +105,3 @@ class Client:
 
                 listPerson += [pers]
 
-
-
