@@ -29,3 +29,24 @@ class Block:
 
     def hashBlockWithPOW(self, pow):
         return hash(self.__sumTemp__, pow)
+
+    def blockToString (block):
+        resStr = ""
+        n = len(block) - 1
+        i = 0
+
+        while i != n :
+            transStr = block[i].transToString()
+            resStr += transStr
+            resStr += "/"
+            i += 1
+        
+        transStr = block[n].transToString()
+        resStr += transStr
+        
+        return resStr
+            
+
+
+
+

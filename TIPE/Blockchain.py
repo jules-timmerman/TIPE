@@ -51,10 +51,14 @@ class Blockchain:
     def blockchainToString(self) : 
         resStr = ""
         n = len(self.validBlocks) - 1
-        for (i,block) in enumerate(self.validBLocks) :
-            if i != n :    
-                strBlock = block.blockToString
-                resStr += strBlock
-                resStr += "!" 
+        i = 0
+        
+        while i != n :    
+            strBlock = (self.validBlocks[i]).blockToString
             resStr += strBlock
+            resStr += "!" 
+            i += 1
+        
+        strBlock = (self.validBlocks[n]).blockToString
+        resStr += strBlock
         return(resStr)
