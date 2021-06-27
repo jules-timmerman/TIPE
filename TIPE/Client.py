@@ -110,17 +110,3 @@ class Client:
 
                 listPerson += [pers]
 
-
-
-
-
-
-    # Pour les envoie de transaction, la fonction devra envoyer 3 trucs :
-    # L'id du client qui l'a envoyé 
-    # La transaction :
-    # La signature :
-
-    # strTrans = transaction.transToString()
-    # La convertir en binaire 
-    # hash = int.from_bytes(sha256(bstrList).digest(), byteorder='big')
-    # signature = pow(hash, self.privateKey[1], self.privateKey[0])

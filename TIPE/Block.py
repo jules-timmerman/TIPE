@@ -9,11 +9,11 @@ class Block:
 
     NZeros = 7 # Nombre de zéros à mettre pour la PoW
 
-    def __init__(self, blockId, lbHash, transaction, proofOfWork = 0):
+    def __init__(self, blockId, lbHash, transactions, proofOfWork = 0,__sumTemp__ = 0):
         self.blockId = blockId  # Id du bloc pour avoir une idée de l'ordre
         self.lbHash = lbHash    # Hash du dernier bloc
         self.proofOfWork = proofOfWork    # Proof of work du hash
-        self.transactions = transaction  # Liste de Transaction
+        self.transactions = transactions  # Liste de Transaction
         self.__sumTemp__ = __sum__() # Somme temporaire de tous les attributs sauf proof of work
     
     def __sum__(self):
@@ -30,28 +30,36 @@ class Block:
     def hashBlockWithPOW(self, pow):
         return hash(self.__sumTemp__, pow)
 
-    def blockToString (block):
+    def blockToString (self):
         resStr = ""
-        resStr += str(block.blockId) + "/"
-        resStr += str(block.lbHash) + "/"
-        resStr += str(block.proofOfWork) + "/"
+        resStr += str(self.blockId) + "/"
+        resStr += str(self.lbHash) + "/"
+        resStr += str(self.proofOfWork) + "/"
 
-        for trans in block.transactions :
-            aux = trans.transToString
+        for trans in self.transactions :
+            aux = trans.transToString()
             resStr += aux + '@'
-        resStr = resStr[:-1] + "/"
+        resStr = resStr[:-1] 
             
-        resStr += str(block.__sumTemp__) 
+        return resStr
 
-        
-
-
-
-
-
-            
+                    
     def stringToBlock (string) :
-        aux = string.spli("/")
+        aux1 = string.split("/")
+        blockId = aux1[0]
+        lbHash = aux1[1]
+        proofOfWork = aux1[2]
+
+        transactions = []
+        aux2 = (aux1[3]).split("@")
+        for trans in aux2 :
+            transactions += [Transaction.stringToTrans(trans)]
+
+        block = Block(blockId, lbHash, transactions, proofOfWork)
+        return block
+
+
+
 
 
 
