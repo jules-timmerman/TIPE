@@ -5,7 +5,7 @@ class Hopital:
 
     def __init__(self, name):
         self.name = name
-        self.PK = getPkFromFile(name) # Public Key
+        self.PK = getPKFromFile(name) # Public Key
 
     def getPKFromFile(name):
         f = open("listeHopital.txt")

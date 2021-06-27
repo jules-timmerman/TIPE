@@ -1,12 +1,16 @@
+import P2P
+import socket
+from Crypto.PublicKey import RSA
+from hashlib import sha256
+
+
 class Client:
     
 
-    from Crypto.PublicKey import RSA
-    from hashlib import sha256
     idClient = 0
 
 
-    def __init__(self):
+    def __init__(self, port):
         self.blockchain = Blockchain()
         self.listPerson = []  
         
@@ -19,24 +23,39 @@ class Client:
         self.privateKey = [keyPair.n, keyPair.d]
         
 
-
+        self.p2p = P2P(socket.gethostbyname(socket.gethostname()), port, receivedData)
         
-        # cf Miner pour le Thread etc...
 
-    def receivedData(data):
+    def sendData(command, params): 
+        """Envoie la commande à tout les pairs
+        command: str avec la commande
+        params: tableau de str avec les parametres"""
+
+        content = command + "|"
+        for p in params:
+            content += p
+            content += "/"
+        content = content[:-1] # On enlève le derniers /
+
+        p2p.sendData(content)
+        
+
+
+    def receivedData(content): 
         # Pour les data, on peut prendre une STR de la forme "command|parametre1/param2/param3..."
         # Les demandes en respond sont potentiellement différentes voir comment gérer les réponses avec une bibliothèque
-        t = data.split("|")
+        
+        t = content.split("|")
         command = t[0]
         params = t[1].split("/")
 
-        if command == "getAllBlocks":   # Envoie l'entièreté de la blockchain au param1 
-            sendAllBlock(params[0])  
-        elif command == "respondAllBlocks":   # C'est la commande reçu après avoir fait getAllBlocks
+        if command == "getAllBlocks":   # Envoie l'entièreté de la blockchain 
+            sendAllBlock()  
+        elif command == "receiveAllBlocks":   # C'est la commande reçu après avoir fait getAllBlocks
             pass
         elif command == "getHospitals":
             pass
-        elif command == "respondHospitals":
+        elif command == "receiveHospitals":
             pass
         elif command == "newBlock":
             pass
@@ -49,6 +68,8 @@ class Client:
     def getAllChain(): # Ask peers for all the chain and compare using alternateFollowingChains
         # Il va falloir choisir la meilleure blockchain parmi toutes celles reçu
         pass # cf P2P
+
+
 
     def getInfoAboutPerson(personId): # Renvoie un objet Person
         # Ca demande des infos au reste du réseau à propos de la personne
