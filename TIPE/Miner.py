@@ -1,5 +1,8 @@
 class Miner:
-    
+
+    from hashlib import sha256
+
+
     def __init__(self):
         self.blockchain = Blockchain()
         self.transToBlock = []      # Liste de transactions à ajouter 
@@ -32,6 +35,7 @@ class Miner:
         elif command == "blockTrans":
             pass
 
+
     def addTransToBlock(self, trans):
         self.transToBlock += trans
         if len(transToBlock >= 5):
@@ -61,4 +65,18 @@ class Miner:
 
     def sendBlock(self, blockTemp): # Envoie le bloc au reste de réseau (A FAIRE PLUS TARD)
         pass
+    
+    def receivedTrans (self,clientId,transaction,signature) :
+        strTrans = transaction.toString()
+        #Rajouter un truc pour convertir strTrans en bytes que l'on nommera bstrTrans
+
+        hashList = int.from_bytes(sha256(bstrTrans).digest(), byteorder='big')  
+
+        f = open("listeHopital.txt")
+        publicKey = f[clientId]
+    
+        hashFromSignature = pow(signature, publicKey[1], publicKey [0])
+ 
+        if hashFromSignature == hashList :
+            addTransToBlock(self,transaction) 
 

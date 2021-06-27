@@ -1,8 +1,26 @@
 class Client:
+    
+
+    from Crypto.PublicKey import RSA
+    from hashlib import sha256
+    idClient = 0
+
 
     def __init__(self):
         self.blockchain = Blockchain()
-        self.listPerson = []            # Liste de Person
+        self.listPerson = []  
+        
+        idClient += 1
+        self.idClient = idClient
+        
+        keyPair = RSA.generate(bits=1024)
+
+        self.publicKey =  [{hex(keyPair.n)}, {hex(keyPair.e)}]
+        self.privateKey = [{hex(keyPair.n)}, {hex(keyPair.d)}]
+        
+
+
+        
         # cf Miner pour le Thread etc...
 
     def receivedData(data):
@@ -70,3 +88,18 @@ class Client:
                    pers.medicalHistory += [mal]
 
                 listPerson += [pers]
+
+
+
+
+
+
+    # Pour les envoie de transaction, la fonction devra envoyer 3 trucs :
+    # L'id du client qui l'a envoyé 
+    # La transaction :
+    # La signature :
+
+    # strTrans = transaction.toString()
+    # La convertir en binaire 
+    # hash = int.from_bytes(sha256(bstrList).digest(), byteorder='big')
+    # signature = pow(hash, self.privateKey[1], self.privateKey[0])
