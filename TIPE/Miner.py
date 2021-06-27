@@ -66,9 +66,9 @@ class Miner:
     def sendBlock(self, blockTemp): # Envoie le bloc au reste de réseau (A FAIRE PLUS TARD)
         pass
     
-    def receivedTrans (self,clientId,transaction,signature) :
-        strTrans = transaction.toString()
-        #Rajouter un truc pour convertir strTrans en bytes que l'on nommera bstrTrans
+    def receivedTrans(self,clientId,transaction,signature) :
+        strTrans = transaction.transToString()
+        bstrTrans = bytes(strTrans, 'utf-8')
 
         hashList = int.from_bytes(sha256(bstrTrans).digest(), byteorder='big')  
 

@@ -99,7 +99,7 @@ class Client:
     # La transaction :
     # La signature :
 
-    # strTrans = transaction.toString()
+    # strTrans = transaction.transToString()
     # La convertir en binaire 
     # hash = int.from_bytes(sha256(bstrList).digest(), byteorder='big')
     # signature = pow(hash, self.privateKey[1], self.privateKey[0])

@@ -9,11 +9,11 @@ class Transaction:
                                     # Ici par l'hopital et donc fait avec la clé privées
         self.clientId = clientId
     
-    def toString(self):
+    def transToString(self):
         s = ""
-        s += str(self.personId)
-        s += str(self.maladieId)
-        s += str(self.newDate)
-        s += str(self.signature)
-        s += str(self.clientId)
+        s += str(self.personId) + "/"
+        s += str(self.maladieId) + "/"
+        s += str(self.newDate) + "/"
+        s += str(self.signature) + "/"
+        s += str(self.clientId) 
         return s

@@ -48,5 +48,13 @@ class Blockchain:
                     self.alternateFollowingChains[i] =  ( val[ : pos-1] + [block] )  # Sinon on modifie le block en rajoutant le block d'entrée
 
 
-
-    
+    def blockchainToString(self) : 
+        resStr = ""
+        n = len(self.validBlocks) - 1
+        for (i,block) in enumerate(self.validBLocks) :
+            if i != n :    
+                strBlock = block.blockToString
+                resStr += strBlock
+                resStr += "!" 
+            resStr += strBlock
+        return(resStr)
