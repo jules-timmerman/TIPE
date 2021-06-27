@@ -15,8 +15,8 @@ class Client:
         
         keyPair = RSA.generate(bits=1024)
 
-        self.publicKey =  [{hex(keyPair.n)}, {hex(keyPair.e)}]
-        self.privateKey = [{hex(keyPair.n)}, {hex(keyPair.d)}]
+        self.publicKey =  [keyPair.n, keyPair.e]
+        self.privateKey = [keyPair.n, keyPair.d]
         
 
 

@@ -1,15 +1,24 @@
 class Transaction:
+    from hashlib import sha256
 
-
-    def __init__(self, personId, maladieId, newDate, clientId, signature):
+    def __init__(self, personId, maladieId, newDate, clientId,signature = -1):
         self.personId = personId    # id de la personne liée à la transaction
         self.maladieId = maladieId  # id de la maladie liée à la transaction
         self.newDate = newDate      # date à ajouter à la personne (que ce soit attrapée ou perdue)
-        self.signature = signature  # Signature de la transaction
-                                    # Ici par l'hopital et donc fait avec la clé privées
         self.clientId = clientId
+        
+        if signature == -1 :
+            s = ""
+            s += str(self.personId) + "|"
+            s += str(self.maladieId) + "|"
+            s += str(self.newDate) + "|"
+            s += str(self.clientId) 
+            signature = int.from_bytes(sha256(s).digest(), byteorder='big')
+            self.signature = signature  # Signature de la transaction
+                                    # Ici par l'hopital et donc fait avec la clé privées
+        
     
-    def transToString(self):
+    def transToString(self): # Séparateurs entre infos d'une transaction sont |
         s = ""
         s += str(self.personId) + "|"
         s += str(self.maladieId) + "|"
@@ -17,3 +26,15 @@ class Transaction:
         s += str(self.signature) + "|"
         s += str(self.clientId) 
         return s
+
+    def stringToTrans (string) :
+        aux = string.split("|")
+        personId = aux[0]
+        maladieId = aux[1]
+        newDate = aux[2]
+        signature = aux[3]
+        clientId = aux[4]
+        
+        transaction = Transaction(personId, maladieId, newDate, clientId,signature)
+        
+        return transaction 

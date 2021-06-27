@@ -46,7 +46,7 @@ class Block:
         
         return resStr
             
-
-
+    def stringToBlock (string) :
+        
 
 

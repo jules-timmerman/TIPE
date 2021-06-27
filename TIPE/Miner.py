@@ -66,17 +66,21 @@ class Miner:
     def sendBlock(self, blockTemp): # Envoie le bloc au reste de réseau (A FAIRE PLUS TARD)
         pass
     
-    def receivedTrans(self,clientId,transaction,signature) :
-        strTrans = transaction.transToString()
-        bstrTrans = bytes(strTrans, 'utf-8')
-
-        hashList = int.from_bytes(sha256(bstrTrans).digest(), byteorder='big')  
-
+    def receivedTrans(self,senderId,transaction) :
+        signature = transaction.signature
         f = open("listeHopital.txt")
-        publicKey = f[clientId]
-    
+        publicKey = f[senderId]
+
+        s = ""
+        s += str(transaction.personId) + "|"
+        s += str(transaction.maladieId) + "|"
+        s += str(transaction.newDate) + "|"
+        s += str(transaction.clientId) 
+        
+        hash = int.from_bytes(sha256(s).digest(), byteorder='big')
+            
         hashFromSignature = pow(signature, publicKey[1], publicKey [0])
  
-        if hashFromSignature == hashList :
+        if hashFromSignature == hash :
             addTransToBlock(self,transaction) 
 
