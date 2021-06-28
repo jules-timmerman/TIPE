@@ -17,7 +17,7 @@ class Transaction:
             s += str(self.clientId) 
             signature = int.from_bytes(sha256(s).digest(), byteorder='big')
             self.signature = signature  # Signature de la transaction
-                                    # Ici par l'hopital et donc fait avec la clé privées
+                                    # Ici par l'hopital et donc fait avec la clé privée
         
     
     def transToString(self): # Séparateurs entre infos d'une transaction sont |
@@ -40,3 +40,17 @@ class Transaction:
         transaction = Transaction(personId, maladieId, newDate, clientId,signature)
         
         return transaction 
+    
+    def isValidTrans(self) :
+        s = ""
+        s += str(self.personId) + "|"
+        s += str(self.maladieId) + "|"
+        s += str(self.newDate) + "|"
+        s += str(self.signature) + "|"
+        s += str(self.clientId) 
+
+        signature = int.from_bytes(sha256(s).digest(), byteorder='big')
+
+        if self.signature == signature :
+            return True
+        return False
