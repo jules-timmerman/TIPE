@@ -49,11 +49,14 @@ class Miner:
             self.receiveAllHospitals(params[0])
         elif command == "newBlock":
             block = Block.stringToBlock(params[0])
-            if block.blockId == self.blockchain.getLastValidBlock().blockId + 1: # Le nouveau bloc recu est le même que celui sur lequel on travaillait
-                pass
+            if block.isValidBlock():
+                if block.blockId == self.blockchain.getLastValidBlock().blockId + 1: # Le nouveau bloc recu est le même que celui sur lequel on travaillait
+                    self.miningThread.stop()
+                    if len(self.transToBlock) >= 5:
+                        self.CreateAndStartThread()
+                self.blockchain.addBlockToAlternateChain(block)
+                self.blockchain.chainUpdate()
 
-            self.blockchain.addBlockToAlternateChain(block)
-            self.blockchain.chainUpdate()
 
         elif command == "addTransToBlock": # senderID puis transaction
             self.receivedTrans(params[0], params[1]) 
@@ -62,6 +65,7 @@ class Miner:
     def addTransToBlock(self, trans):
         self.transToBlock += trans
         if len(transToBlock >= 5):
+            self.transToBlock = self.transToBlock[5:]
             #self.block() # Peut-être mettre dans un Thread plutôt 
             self.createAndStartThread()
 
@@ -84,7 +88,9 @@ class Miner:
         self.sendBlock(blockTemp)
 
     def sendBlock(self, blockTemp): # Envoie le bloc au reste de réseau (A FAIRE PLUS TARD)
-        pass
+        self.sendData("newBlock", [blockTemp.blockToString()])
+        if len(self.transToBlock) >= 5:
+            self.CreateAndStartThread()
     
     def receivedTrans(self,senderId,transaction) :
         signature = transaction.signature

@@ -54,7 +54,7 @@ class Blockchain:
         validBlocks = self.validBlocks
         
         resStr = ""
-        n = len(validBlocks) - 1
+        n = len(validBlocks)
         i = 0
         
         while i != n :    
@@ -62,9 +62,8 @@ class Blockchain:
             resStr += strBlock
             resStr += "!" 
             i += 1
-        
-        strBlock = (validBlocks[n]).blockToString()
-        resStr += strBlock
+        resStr = resStr[:-1]
+
         return resStr
 
     def stringToValidBlocks(string) :
