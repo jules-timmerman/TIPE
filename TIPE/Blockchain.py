@@ -54,14 +54,11 @@ class Blockchain:
         validBlocks = self.validBlocks
         
         resStr = ""
-        n = len(validBlocks)
-        i = 0
-        
-        while i != n :    
+
+        for i in range(len(validBlocks)) :    
             strBlock = (validBlocks[i]).blockToString()
             resStr += strBlock
             resStr += "!" 
-            i += 1
         resStr = resStr[:-1]
 
         return resStr
