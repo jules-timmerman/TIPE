@@ -7,7 +7,7 @@ class Transaction:
         self.personId = personId    # id de la personne liée à la transaction
         self.maladieId = maladieId  # id de la maladie liée à la transaction
         self.newDate = newDate      # date à ajouter à la personne (que ce soit attrapée ou perdue)
-        self.clientId = clientId
+        self.clientId = clientId    # nom de la personne qui a envoye la transaction
         
         if signature == -1 :
             s = ""

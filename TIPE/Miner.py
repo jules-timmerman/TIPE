@@ -1,7 +1,10 @@
 from P2P import P2P
 import socket
 from Blockchain import Blockchain
+from Block import Block
 from hashlib import sha256
+import threading
+
 
 class Miner:
 
@@ -19,6 +22,7 @@ class Miner:
 
         for i in range(len(firstIPs)):
             self.p2p.connect_with_node(firstIPs[i], firstPorts[i])
+        self.miningThread = threading.Thread(target=self.block, args=(self))
 
     def sendData(self, command, params): 
         """Envoie la commande à tout les pairs
@@ -31,8 +35,6 @@ class Miner:
         
 
     def receivedData(self, content):  
-        # Pour les data, on peut prendre une STR de la forme "command|parametre1/param2/param3..."
-        # Les demandes en respond sont potentiellement différentes voir comment gérer les réponses avec une bibliothèque
         command = contents["command"]
         params = contents["params"]
 
@@ -46,7 +48,11 @@ class Miner:
         elif command == "respondHospitals":
             self.receiveAllHospitals(params[0])
         elif command == "newBlock":
-            self.blockchain.addBlockToAlternateChain(params[0])
+            block = Block.stringToBlock(params[0])
+            if block.blockId == self.blockchain.getLastValidBlock().blockId + 1: # Le nouveau bloc recu est le même que celui sur lequel on travaillait
+                pass
+
+            self.blockchain.addBlockToAlternateChain(block)
             self.blockchain.chainUpdate()
 
         elif command == "addTransToBlock": # senderID puis transaction
@@ -56,7 +62,8 @@ class Miner:
     def addTransToBlock(self, trans):
         self.transToBlock += trans
         if len(transToBlock >= 5):
-            self.block() # Peut-être mettre dans un Thread plutôt 
+            #self.block() # Peut-être mettre dans un Thread plutôt 
+            self.createAndStartThread()
 
     def block(self): 
         lb = self.blockchain.getLastValidBlock() # Last Block
@@ -132,6 +139,6 @@ class Miner:
             for i in range(min+1, lenNew):
                 f.write(linesNew[i])
 
-
-
-
+    def createAndStartThread(self):
+        self.miningThread = threading.Thread(target=self.block, args=(self))
+        self.start()

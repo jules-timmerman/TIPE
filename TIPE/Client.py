@@ -26,7 +26,7 @@ class Client:
         self.privateKey = [keyPair.n, keyPair.d]
         
 
-        self.p2p = P2P( , port, self.receivedData)
+        self.p2p = P2P(socket.gethostbyname(socket.gethostname()), port, self.receivedData)
         #self.p2p = P2P("127.0.0.1", port, self.receivedData)
         self.p2p.start()
 
@@ -61,7 +61,8 @@ class Client:
         elif command == "respondHospitals":
             self.receiveAllHospitals(params[0])
         elif command == "newBlock":
-            self.blockchain.addBlockToAlternateChain(params[0])
+            block = Block.blockToString(params[0])
+            self.blockchain.addBlockToAlternateChain(block)
             self.blockchain.chainUpdate()
 
 
