@@ -11,6 +11,10 @@ class Person:
         self.name = name            
         self.medicalHistory = []        # Tableau de Maladie
 
-    
+    def personToString(self):
+        pass
+
+    def stringToPerson(s):
+        pass
 
     
