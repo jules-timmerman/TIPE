@@ -31,7 +31,7 @@ class Block:
     def hashBlockWithPOW(self, pow):
         return hash(self.__sumTemp__, pow)
 
-    def blockToString (block):
+    def blockToString (self):
         # Caractéristiques du blocs séparé par des /
         # Les différentes transactions par des @
         resStr = ""

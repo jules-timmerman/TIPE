@@ -33,8 +33,10 @@ class Client:
         for i in range(len(firstIPs)):
             self.p2p.connect_with_node(firstIPs[i], firstPorts[i])
 
+        self.sendData("getAllBlocks") # On récupère toute la chaîne du reste du réseau
 
-    def sendData(self, command, params): 
+
+    def sendData(self, command, params=[]): 
         """Envoie la commande à tout les pairs
         command: str avec la commande
         params: tableau de str avec les parametres"""
@@ -61,15 +63,25 @@ class Client:
         elif command == "respondHospitals":
             self.receiveAllHospitals(params[0])
         elif command == "newBlock":
-            block = Block.blockToString(params[0])
-            self.blockchain.addBlockToAlternateChain(block)
-            self.blockchain.chainUpdate()
+            block = Block.stringToBlock(params[0])
+            if block.isValidBlock():
+                self.parseBlock(block)
+                self.blockchain.addBlockToAlternateChain(block)
+                self.blockchain.chainUpdate()
+        elif command == "getInfoAboutPerson":
+            p = self.getInfoAboutPerson(params[0])
+            if p != None:
+                return {"command": "respondInfoAboutPerson", "content": [p]}
+        elif command == "respondInfoAboutPerson":
+            pass
 
 
 
-    def getInfoAboutPerson(personId): # Renvoie un objet Person
-        # Ca demande des infos au reste du réseau à propos de la personne
-        pass
+    def getInfoAboutPerson(self, personId): # Renvoie un objet Person
+        for p in self.listPerson:
+            if p.personId == personId:
+                return p
+        return None
 
 
     def parseBlock(self, block):
@@ -93,7 +105,9 @@ class Client:
                         
             if not persFound:
                 pers = getInfoAboutPerson(trans.personId) # On récupère les infos de la personne du reste du réseau
-               
+                
+
+
                 malFound = False               
                 for mal in pers.medicalHistory:
                     if mal.malId == trans.malId:
