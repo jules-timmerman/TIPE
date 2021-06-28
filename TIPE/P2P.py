@@ -9,6 +9,9 @@ class P2P (Node):
 
         self.callbackMessage = callbackMessage
         self.commandSendHistory = [] # Liste avec des ids de commandes pour éviter les boucles
+        # l'IP global de l'initiateur pour lui répondre
+        # On supposera ici que tout les ports sont ouverts et que ce sont les mêmes en extérieur et intérieur
+        self.globalIP = get('https://api.ipify.org').text
 
     def outbound_node_connected(self, connected_node):
         print("outbound_node_connected: " + connected_node.host)
@@ -31,12 +34,12 @@ class P2P (Node):
         if not id in self.commandSendHistory:
             self.commandSendHistory += [id]
             content = data["content"]
-            s = self.callbackMessage(content) # Potentiellement la commande à renvoyer
-            if not s == "":
+            s = self.callbackMessage(content) # Potentiellement la commande à renvoyer (sous forme dict contents)
+            if s != None:
                 self.connect_with_node(data["globalIP"], data["port"])
                 for n in self.nodes_outbound: 
                     if n.host == host and n.port == port:
-                        self.send_to_node() # Il faut savoir à qui renvoyer
+                        self.send_to_node(n, {"id":time.time(), "globalIP": self.globalIP, "port": self.port, "content":s}) # Il faut savoir à qui renvoyer
             self.forwardData(data)
         
         
@@ -58,17 +61,7 @@ class P2P (Node):
             unique += str(p)
         id = str(t) + unique
         self.commandSendHistory += [id] # On ajoute aussi l'ID pour que le mec de base renvoit
-
-
         self.commandSendHistory += id
-        globalIP = get('https://api.ipify.org').text # l'IP global de l'initiateur pour lui répondre
-        # On supposera ici que tout les ports sont ouverts et que ce sont les mêmes en extérieur et intérieur
-        port = self.port
 
-        self.send_to_nodes({"id": id, "globalIP":globalIP, "port": port, "content":contents})
-
-
-    def discovery():
-        pass
-
+        self.send_to_nodes({"id": id, "globalIP":self.globalIP, "port": self.port, "content":contents})
 

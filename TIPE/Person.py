@@ -12,8 +12,3 @@ class Person:
         self.medicalHistory = []        # Tableau de Maladie
 
     
-    
-
-
-
-

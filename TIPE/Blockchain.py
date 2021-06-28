@@ -12,7 +12,7 @@ class Blockchain:
         self.alternateFollowingChains = [[]]  
         
 
-    def  alreadyInAlternate(self,l) :
+    def alreadyInAlternate(self,l) :
         for liste in self.alternateFollowingChains :
             if liste == l :
                 return True      
