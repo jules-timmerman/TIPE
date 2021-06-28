@@ -46,7 +46,7 @@ class Block:
             
         return resStr
 
-                    
+    @staticmethod   
     def stringToBlock (string) :
         aux1 = string.split("/")
         blockId = aux1[0]

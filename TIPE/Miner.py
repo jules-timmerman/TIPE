@@ -56,6 +56,20 @@ class Miner:
                         self.CreateAndStartThread()
                 self.blockchain.addBlockToAlternateChain(block)
                 self.blockchain.chainUpdate()
+        elif command == "getPerson":
+            p = self.getPerson(params[0])
+            if p != None:
+                return {"command": "respondPerson", "content": [p.personToString()]}
+        elif command == "respondPerson":
+            person = Person.stringToPerson(params[0])
+            isFound = False
+            for p in self.listPerson:
+                if p.personId == person.personId:
+                    isFound = True
+                    if len(p.medicalHistory) < len(person.medicalHistory):
+                        p = person
+            if not isFound:
+                self.listPerson += person
 
 
         elif command == "addTransToBlock": # senderID puis transaction
@@ -148,3 +162,9 @@ class Miner:
     def createAndStartThread(self):
         self.miningThread = threading.Thread(target=self.block, args=(self))
         self.start()
+
+    def getPerson(self, personId): # Renvoie un objet Person que l'on connait
+        for p in self.listPerson:
+            if p.personId == personId:
+                return p
+        return None

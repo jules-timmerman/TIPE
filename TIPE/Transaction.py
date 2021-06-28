@@ -29,6 +29,7 @@ class Transaction:
         s += str(self.clientId) 
         return s
 
+    @staticmethod
     def stringToTrans (string) :
         aux = string.split("|")
         personId = aux[0]

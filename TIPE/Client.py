@@ -3,6 +3,8 @@ import socket
 from Blockchain import Blockchain
 from Crypto.PublicKey import RSA
 from hashlib import sha256
+from Person import Person
+import time
 
 
 class Client:
@@ -65,24 +67,45 @@ class Client:
         elif command == "newBlock":
             block = Block.stringToBlock(params[0])
             if block.isValidBlock():
-                self.parseBlock(block)
+                oldLength = len(self.blockchain.validBlocks) # On va s'interesser au changement de taille
                 self.blockchain.addBlockToAlternateChain(block)
                 self.blockchain.chainUpdate()
-        elif command == "getInfoAboutPerson":
-            p = self.getInfoAboutPerson(params[0])
+                newLength = len(self.blockchain.validBlocks) 
+
+                if newLength > oldLength: # Pour pouvoir parse les nouveaux blocs valides
+                    for i in range(oldLength, newLength):
+                        self.parseBlock(self.blockchain.validBlocks[i])
+        elif command == "getPerson":
+            p = self.getPerson(params[0])
             if p != None:
-                return {"command": "respondInfoAboutPerson", "content": [p]}
-        elif command == "respondInfoAboutPerson":
-            pass
+                return {"command": "respondPerson", "content": [p.personToString()]}
+        elif command == "respondPerson":
+            person = Person.stringToPerson(params[0])
+            isFound = False
+            for p in self.listPerson:
+                if p.personId == person.personId:
+                    isFound = True
+                    if len(p.medicalHistory) < len(person.medicalHistory):
+                        p = person
+            if not isFound:
+                self.listPerson += person
+
+                
 
 
 
-    def getInfoAboutPerson(self, personId): # Renvoie un objet Person
+    def getPerson(self, personId): # Renvoie un objet Person que l'on connait
         for p in self.listPerson:
             if p.personId == personId:
                 return p
         return None
 
+    def getUnknownPerson(self, personId):
+        self.sendData("getPerson", [personId])
+
+        time.sleep(5)
+
+        return self.getPerson(personId)
 
     def parseBlock(self, block):
         """Lit les transactions dans un bloc donné et met à jour la liste des personnes"""
@@ -104,22 +127,20 @@ class Client:
             
                         
             if not persFound:
-                pers = getInfoAboutPerson(trans.personId) # On récupère les infos de la personne du reste du réseau
-                
+                pers = getUnknownPerson(trans.personId) # On récupère les infos de la personne du reste du réseau
+                if pers != None:
+                    malFound = False               
+                    for mal in pers.medicalHistory:
+                        if mal.malId == trans.malId:
+                            malFound = True
+                            if trans.newDate not in mal.dates:
+                                mal.addDate(trans.newDate)
+                    if not malFound:
+                       mal = Maladie(trans.malId)
+                       mal.addDates(trans.newDate)
+                       pers.medicalHistory += [mal]
 
-
-                malFound = False               
-                for mal in pers.medicalHistory:
-                    if mal.malId == trans.malId:
-                        malFound = True
-                        if trans.newDate not in mal.dates:
-                            mal.addDate(trans.newDate)
-                if not malFound:
-                   mal = Maladie(trans.malId)
-                   mal.addDates(trans.newDate)
-                   pers.medicalHistory += [mal]
-
-                listPerson += [pers]
+                    listPerson += [pers]
 
     def getHospitals():
         f = open("listeHopital.txt", "r")

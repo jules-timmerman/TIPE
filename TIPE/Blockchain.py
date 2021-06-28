@@ -63,6 +63,7 @@ class Blockchain:
 
         return resStr
 
+    @staticmethod
     def stringToValidBlocks(string) :
         aux = string.split("!")
         validBlocks = []
