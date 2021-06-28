@@ -61,6 +61,15 @@ class Block:
         block = Block(blockId, lbHash, transactions, proofOfWork)
         return block
 
+    def isValidBlock(self) :
+        if self.blockId == 0 :
+            return True
+        if self.hashBlock[0:Block.NZeros] != "0" * Block.NZeros:
+            for trans in self.transactions :
+                if not trans.isValidTrans() :
+                    return False
+            return True
+        return False
 
 
 
