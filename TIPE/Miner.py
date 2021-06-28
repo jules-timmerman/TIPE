@@ -36,19 +36,21 @@ class Miner:
         command = contents["command"]
         params = contents["params"]
 
-        if command == "getAllBlocks":   # Envoie l'entièreté de la blockchain au param1 
-            pass
-        elif command == "respondAllBlocks":   # C'est la commande reçu après avoir fait getAllBlocks
-            pass
-        elif command == "getHospitals":
-            pass
-        elif command == "respondHospitals":
-            pass
-        elif command == "newBlock":
-            pass
 
-        elif command == "blockTrans":
-            pass
+        if command == "getAllBlocks":   # Envoie l'entièreté de la blockchain au param1 
+            return {"command": "respondAllBlocks", "content": [self.blockchain.validBlocksToString()]}
+        elif command == "respondAllBlocks":   # C'est la commande reçu après avoir fait getAllBlocks
+            self.blockchain.alternateFollowingChains += params[0]
+        elif command == "getHospitals":
+            return {"command": "respondHospitals", "content": [self.getHospitals()]}
+        elif command == "respondHospitals":
+            self.receiveAllHospitals(params[0])
+        elif command == "newBlock":
+            self.blockchain.addBlockToAlternateChain(params[0])
+            self.blockchain.chainUpdate()
+
+        elif command == "addTransToBlock": # senderID puis transaction
+            self.receivedTrans(params[0], params[1]) 
 
 
     def addTransToBlock(self, trans):
@@ -79,7 +81,7 @@ class Miner:
     
     def receivedTrans(self,senderId,transaction) :
         signature = transaction.signature
-        f = open("listeHopital.txt")
+        f = open("listeHopital.txt", "r")
         publicKey = f[senderId]
 
         s = ""
@@ -93,5 +95,43 @@ class Miner:
         hashFromSignature = pow(signature, publicKey[1], publicKey [0])
  
         if hashFromSignature == hash :
-            addTransToBlock(self,transaction) 
+            self.addTransToBlock(transaction) 
+
+        f.close()
+
+    def getHospitals():
+        f = open("listeHopital.txt", "r")
+        s = ""
+        for l in f:
+            s += l
+            s += "/"
+        s = s[:-1]
+        f.close()
+        return s
+
+    def receiveAllHospitals(s):
+        linesOri = getHospitals().split("/")
+        
+        f = open("listeHopital.txt", "w")
+        linesNew = s.split("/")
+
+
+        lenOri,lenNew = len(linesOri), len(linesNew)
+        min,max = min(lenOri, lenNew), max(lenOri, lenNew)
+
+        for i in range(min):
+            if linesOri[i] == "":
+                f.write(linesOri[i])
+            else:
+                f.write(linesNew[i])
+
+        if lenOri > lenNew:
+            for i in range(min+1, lenOri):
+                f.write(linesOri[i])
+        else:
+            for i in range(min+1, lenNew):
+                f.write(linesNew[i])
+
+
+
 
