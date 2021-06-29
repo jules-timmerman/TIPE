@@ -5,6 +5,7 @@ from Crypto.PublicKey import RSA
 from hashlib import sha256
 from Person import Person
 import time
+from Block import Block
 
 
 class Client:
@@ -16,6 +17,8 @@ class Client:
     def __init__(self, port, firstIPs=[refIP], firstPorts=[refPort], isFirstClient = False): # firstIPs est un tableau de premiers pairs à qui se connecter idem firstPorts
         self.blockchain = Blockchain()
         self.listPerson = []  
+
+        self.idClient = -1
         
         keyPair = RSA.generate(bits=1024)
 
@@ -36,6 +39,8 @@ class Client:
             f = open(self.pathToHopitalList, "w")
             f.write(str(self.publicKey[0]) + "%" + str(self.publicKey[1]) + '\n')
             f.close()
+
+            self.blockchain.validBlocks = [Block(0,0, [], 0)]
         else:
             for i in range(len(firstIPs)):
                 self.p2p.connect_with_node(firstIPs[i], firstPorts[i])
@@ -59,9 +64,6 @@ class Client:
 
 
     def receivedData(self, contents): 
-        # Pour les data, on peut prendre une STR de la forme "command|parametre1/param2/param3..."
-        # Les demandes en respond sont potentiellement différentes voir comment gérer les réponses avec une bibliothèque
-        
         command = contents["command"]
         params = contents["params"]
 
@@ -75,7 +77,6 @@ class Client:
             self.receiveAllHospitals(params[0])
         elif command == "newBlock":
             block = Block.stringToBlock(params[0])
-            self.sendData("getHospitals")
             time.sleep(5) # On attends de traiter les réponses
             if block.isValidBlock():
                 oldLength = len(self.blockchain.validBlocks) # On va s'interesser au changement de taille
@@ -103,14 +104,15 @@ class Client:
         elif command == "getTotalClients":
             return {"command": "respondTotalClients", "params": [self.getTotalClients()]}
         elif command == "respondTotalClients":
-            self.idClient = params[0] + 1
-            f = open(self.pathToHopitalList, "a")
-            f.write(str(self.publicKey[0]) + "%" + str(self.publicKey[1]) + '\n')
-            f.close()
-            self.sendData("respondHospitals", [self.getHospitals()])
+            if self.idClient == -1: # Pour ignorer les requêtes suivantes à notre première réponse (supposée correcte)
+                self.idClient = params[0]
+                f = open(self.pathToHopitalList, "a")
+                f.write(str(self.publicKey[0]) + "%" + str(self.publicKey[1]) + '\n')
+                f.close()
+                self.sendData("respondHospitals", [self.getHospitals()])
 
 
-
+    # SHARED FUNCTIONS
 
     def getPerson(self, personId): # Renvoie un objet Person que l'on connait
         for p in self.listPerson:
@@ -124,41 +126,6 @@ class Client:
         time.sleep(5)
 
         return self.getPerson(personId)
-
-    def parseBlock(self, block):
-        """Lit les transactions dans un bloc donné et met à jour la liste des personnes"""
-        listTrans = block.transactions # Liste des transactions du blocs
-        for trans in listTrans:
-            persFound = False
-            for pers in listPerson:
-                if trans.personId == pers.personId:
-                    persFound = True
-                    malFound = False
-                    for mal in pers.medicalHistory:
-                        if mal.malId == trans.malId:
-                            mal.addDate(trans.newDate)
-                            malFound = True
-                    if not malFound:
-                        mal = Maladie(trans.malId)
-                        mal.addDates(trans.newDate)
-                        pers.medicalHistory += [mal]
-            
-                        
-            if not persFound:
-                pers = getUnknownPerson(trans.personId) # On récupère les infos de la personne du reste du réseau
-                if pers != None:
-                    malFound = False               
-                    for mal in pers.medicalHistory:
-                        if mal.malId == trans.malId:
-                            malFound = True
-                            if trans.newDate not in mal.dates:
-                                mal.addDate(trans.newDate)
-                    if not malFound:
-                       mal = Maladie(trans.malId)
-                       mal.addDates(trans.newDate)
-                       pers.medicalHistory += [mal]
-
-                    listPerson += [pers]
 
     def getHospitals(self):
         f = open(self.pathToHopitalList, "r")
@@ -186,17 +153,55 @@ class Client:
                 f.write(linesOri[i] + '\n')
 
         if lenOri > lenNew:
-            for i in range(low+1, lenOri):
+            for i in range(low, lenOri):
                 f.write(linesOri[i] + '\n')
         else:
-            for i in range(low+1, lenNew):
+            for i in range(low, lenNew):
                 f.write(linesNew[i] + '\n')
-
-    def sendTrans(self, trans):
-        self.sendData("addTransToBlock", [trans.transToString()])
 
     def getTotalClients(self):
         f = open(self.pathToHopitalList, "r")
-        size = len(f.readlines()) - 1
+        size = len(f.readlines())
         f.close()
         return size
+
+
+    # CLIENT FUNCTIONS
+
+    def parseBlock(self, block):
+        """Lit les transactions dans un bloc donné et met à jour la liste des personnes"""
+        listTrans = block.transactions # Liste des transactions du blocs
+        for trans in listTrans: # On regarde les transactions du blocs
+            persFound = False
+            for pers in listPerson: # On boucle sur les personnes que l'on connait
+                if trans.personId == pers.personId: # Si la personne de la boucle est celle en rapport avec la transaction
+                    persFound = True
+                    malFound = False
+                    for mal in pers.medicalHistory: # On boucle maintenant sur les maladies que l'on connait 
+                        if mal.malId == trans.malId: # Une fois que l'on a trouvé la maladie en question
+                            mal.addDate(trans.newDate) # On ajoute la date
+                            malFound = True
+                    if not malFound: # Si on avait pas trouvé la maladie
+                        mal = Maladie(trans.malId) # On crée la maladie
+                        mal.addDates(trans.newDate) # Et on ajoute la date
+                        pers.medicalHistory += [mal] # Et on ajoute la maladie à l'historique de la personne
+            
+                        
+            if not persFound: # Si on a jamais trouvé la personne de la transaction
+                pers = getUnknownPerson(trans.personId) # On récupère les infos de la personne du reste du réseau
+                if pers != None: # Si on a bien eu une réponse (sinon on fait rien parce qu'on est des victimes)
+                    malFound = False               
+                    for mal in pers.medicalHistory: # On refait comme avant à la recherche de la maladie
+                        if mal.malId == trans.malId:
+                            malFound = True
+                            if trans.newDate not in mal.dates: # Si la date n'est pas déjà dedans (on a pu recevoir une info déjà mise à jour
+                                mal.addDate(trans.newDate)
+                    if not malFound: # Si on a pas trouvé la maladie on va la rajouter
+                       mal = Maladie(trans.malId)
+                       mal.addDates(trans.newDate)
+                       pers.medicalHistory += [mal]
+
+                    listPerson += [pers]
+
+    def sendTrans(self, trans):
+        self.sendData("addTransToBlock", [trans.transToString()])

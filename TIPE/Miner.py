@@ -38,28 +38,30 @@ class Miner:
         command = contents["command"]
         params = contents["params"]
 
-
         if command == "getAllBlocks":   # Envoie l'entièreté de la blockchain au param1 
-            return {"command": "respondAllBlocks", "content": [self.blockchain.validBlocksToString()]}
+            return {"command": "respondAllBlocks", "params": [self.blockchain.validBlocksToString()]}
         elif command == "respondAllBlocks":   # C'est la commande reçu après avoir fait getAllBlocks
             self.blockchain.alternateFollowingChains += params[0]
         elif command == "getHospitals":
-            return {"command": "respondHospitals", "content": [self.getHospitals()]}
+            return {"command": "respondHospitals", "params": [self.getHospitals()]}
         elif command == "respondHospitals":
             self.receiveAllHospitals(params[0])
         elif command == "newBlock":
             block = Block.stringToBlock(params[0])
+            time.sleep(5) # On attends de traiter les réponses
             if block.isValidBlock():
-                if block.blockId == self.blockchain.getLastValidBlock().blockId + 1: # Le nouveau bloc recu est le même que celui sur lequel on travaillait
-                    self.miningThread.stop()
-                    if len(self.transToBlock) >= 5:
-                        self.CreateAndStartThread()
+                oldLength = len(self.blockchain.validBlocks) # On va s'interesser au changement de taille
                 self.blockchain.addBlockToAlternateChain(block)
                 self.blockchain.chainUpdate()
+                newLength = len(self.blockchain.validBlocks) 
+
+                if newLength > oldLength: # Pour pouvoir parse les nouveaux blocs valides
+                    for i in range(oldLength, newLength):
+                        self.parseBlock(self.blockchain.validBlocks[i])
         elif command == "getPerson":
             p = self.getPerson(params[0])
             if p != None:
-                return {"command": "respondPerson", "content": [p.personToString()]}
+                return {"command": "respondPerson", "params": [p.personToString()]}
         elif command == "respondPerson":
             person = Person.stringToPerson(params[0])
             isFound = False
@@ -70,14 +72,81 @@ class Miner:
                         p = person
             if not isFound:
                 self.listPerson += person
+        elif command == "getTotalClients":
+            return {"command": "respondTotalClients", "params": [self.getTotalClients()]}
+        elif command == "respondTotalClients":
+            if self.idClient == -1: # Pour ignorer les requêtes suivantes à notre première réponse (supposée correcte)
+                self.idClient = params[0]
+                f = open(self.pathToHopitalList, "a")
+                f.write(str(self.publicKey[0]) + "%" + str(self.publicKey[1]) + '\n')
+                f.close()
+                self.sendData("respondHospitals", [self.getHospitals()])
+
+
+
         elif command == "addTransToBlock": # senderID puis transaction
             self.receivedTrans(params[0], params[1]) 
 
 
+
+    # SHARED FUNCTIONS
+    def getPerson(self, personId): # Renvoie un objet Person que l'on connait
+        for p in self.listPerson:
+            if p.personId == personId:
+                return p
+        return None
+
+    def getUnknownPerson(self, personId):
+        self.sendData("getPerson", [personId])
+
+        time.sleep(5)
+
+        return self.getPerson(personId)
+
+    def getHospitals(self):
+        f = open(self.pathToHopitalList, "r")
+        s = ""
+        for l in f:
+            s += l.strip('\n')
+            s += "/"
+        s = s[:-1]
+        f.close()
+        return s
+
+    def receiveAllHospitals(self, s):
+        linesOri = self.getHospitals().split("/")
+        
+        f = open(self.pathToHopitalList, "w")
+        linesNew = s.split("/")
+
+        lenOri,lenNew = len(linesOri), len(linesNew)
+        low = min(lenOri, lenNew)
+
+        for i in range(low):
+            if linesOri[i] == "":
+                f.write(linesNew[i] + '\n')
+            else:
+                f.write(linesOri[i] + '\n')
+
+        if lenOri > lenNew:
+            for i in range(low, lenOri):
+                f.write(linesOri[i] + '\n')
+        else:
+            for i in range(low, lenNew):
+                f.write(linesNew[i] + '\n')
+
+    def getTotalClients(self):
+        f = open(self.pathToHopitalList, "r")
+        size = len(f.readlines())
+        f.close()
+        return size
+    
+    
+    # MINER FUNCTIONS
+
     def addTransToBlock(self, trans):
         self.transToBlock += trans
         if len(transToBlock >= 5):
-            self.transToBlock = self.transToBlock[5:]
             #self.block() # Peut-être mettre dans un Thread plutôt 
             self.createAndStartThread()
 
@@ -86,6 +155,7 @@ class Miner:
         blockId = lb.blockId + 1
         lbHash = lb.hashBlock()
         trans = self.transToBlock[0:5]
+        self.transToBlock = self.transToBlock[5:]
         
         blockTemp = Block(blockId, lbHash, trans)
 
@@ -124,45 +194,6 @@ class Miner:
 
         f.close()
 
-    def getHospitals():
-        f = open("listeHopital.txt", "r")
-        s = ""
-        for l in f:
-            s += l
-            s += "/"
-        s = s[:-1]
-        f.close()
-        return s
-
-    def receiveAllHospitals(s):
-        linesOri = getHospitals().split("/")
-        
-        f = open("listeHopital.txt", "w")
-        linesNew = s.split("/")
-
-
-        lenOri,lenNew = len(linesOri), len(linesNew)
-        min,max = min(lenOri, lenNew), max(lenOri, lenNew)
-
-        for i in range(min):
-            if linesOri[i] == "":
-                f.write(linesOri[i])
-            else:
-                f.write(linesNew[i])
-
-        if lenOri > lenNew:
-            for i in range(min+1, lenOri):
-                f.write(linesOri[i])
-        else:
-            for i in range(min+1, lenNew):
-                f.write(linesNew[i])
-
     def createAndStartThread(self):
         self.miningThread = threading.Thread(target=self.block, args=(self))
         self.start()
-
-    def getPerson(self, personId): # Renvoie un objet Person que l'on connait
-        for p in self.listPerson:
-            if p.personId == personId:
-                return p
-        return None

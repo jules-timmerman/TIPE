@@ -1,6 +1,8 @@
 from Client import Client
 from Miner import Miner
 import time
+import sys
+
 
 startPort = 8000
 
@@ -10,7 +12,7 @@ startPort = 8000
 
 #clients = [c0]
 #miners = []
-#N = 1
+#N = 5
 
 #for i in range(1, N):
 #    clients += [Client(startPort + i, ["127.0.0.1"], [startPort])]
@@ -25,7 +27,22 @@ startPort = 8000
 
 # **********************************
 
-c1 = Client (startPort+1, ["127.0.0.1"], [startPort])
-time.sleep(10)
-print(c1.idClient)
+#c1 = Client (startPort+1, ["127.0.0.1"], [startPort])
+#time.sleep(10)
+#print(c1.idClient)
 
+
+# *********************************
+
+#c2 = Client (startPort+2, ["127.0.0.1"], [startPort])
+#time.sleep(10)
+#print(c2.idClient)
+
+
+
+# *********************************
+
+c = Client (int(sys.argv[1]), ["127.0.0.1"], [8000])
+time.sleep(10)
+print(c.idClient)
+print(c.blockchain.validBlocks)

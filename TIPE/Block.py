@@ -10,12 +10,13 @@ class Block:
 
     NZeros = 7 # Nombre de zéros à mettre pour la PoW
 
+
     def __init__(self, blockId, lbHash, transactions, proofOfWork = 0,__sumTemp__ = 0):
         self.blockId = blockId  # Id du bloc pour avoir une idée de l'ordre
         self.lbHash = lbHash    # Hash du dernier bloc
         self.proofOfWork = proofOfWork    # Proof of work du hash
         self.transactions = transactions  # Liste de Transaction
-        self.__sumTemp__ = __sum__() # Somme temporaire de tous les attributs sauf proof of work
+        self.__sumTemp__ = self.__sum__() # Somme temporaire de tous les attributs sauf proof of work
     
     def __sum__(self):
         toHash = ""
@@ -64,7 +65,7 @@ class Block:
     def isValidBlock(self) :
         if self.blockId == 0 :
             return True
-        if self.hashBlock[0:Block.NZeros] != "0" * Block.NZeros:
+        if self.hashBlock()[0:Block.NZeros] != "0" * Block.NZeros:
             for trans in self.transactions :
                 if not trans.isValidTrans() :
                     return False
