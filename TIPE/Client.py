@@ -6,6 +6,7 @@ from hashlib import sha256
 from Person import Person
 import time
 from Block import Block
+from Transaction import Transaction
 
 
 class Client:
@@ -15,6 +16,9 @@ class Client:
 
 
     def __init__(self, port, firstIPs=[refIP], firstPorts=[refPort], isFirstClient = False): # firstIPs est un tableau de premiers pairs à qui se connecter idem firstPorts
+        
+        print("CLIENT "+ str(port))
+
         self.blockchain = Blockchain()
         self.listPerson = []  
 
@@ -201,7 +205,14 @@ class Client:
                        mal.addDates(trans.newDate)
                        pers.medicalHistory += [mal]
 
-                    listPerson += [pers]
+                    self.listPerson += [pers]
+            else:
+                p = Person(trans.personId, "Unknown")
+                self.listPerson += [p]
+
 
     def sendTrans(self, trans):
         self.sendData("addTransToBlock", [trans.transToString()])
+
+    def createTrans(self, personId, maladieId, newDate):
+        return Transaction(personId, maladieId, newDate, self.idClient, self.privateKey)

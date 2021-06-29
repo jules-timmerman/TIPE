@@ -5,6 +5,7 @@ from Block import Block
 from hashlib import sha256
 import threading
 import Transaction
+import time
 
 class Miner:
 
@@ -13,18 +14,35 @@ class Miner:
 
 
     def __init__(self, port, firstIPs=[refIP], firstPorts=[refPort]):
+
+        print("MINER "+ str(port))
+
         self.blockchain = Blockchain()
         self.transToBlock = []      # Liste de transactions à ajouter 
 
-        self.p2p = P2P(socket.gethostbyname(socket.gethostname()), port, self.receivedData)
-        #self.p2p = P2P("127.0.0.1", port, self.receivedData)
+        self.listPerson = [] # Liste de personne (pas forcément nécessaire mais la banane de TF2)
+
+        self.pathToHopitalList = "listeHopital" + str(port) + ".txt" # Pour les tests utiles pour avoir différent .txt
+        f = open(self.pathToHopitalList, "w")
+        f.close()
+
+        #self.p2p = P2P(socket.gethostbyname(socket.gethostname()), port, self.receivedData)
+        self.p2p = P2P("127.0.0.1", port, self.receivedData)
         self.p2p.start()
 
         for i in range(len(firstIPs)):
-            self.p2p.connect_with_node(firstIPs[i], firstPorts[i])
+                self.p2p.connect_with_node(firstIPs[i], firstPorts[i])
+        self.sendData("getAllBlocks") # On récupère toute la chaîne du reste du réseau
+        time.sleep(2)
+        self.sendData("getHospitals") # On récupère la liste avec les clés
+        time.sleep(2)
+        self.sendData("getTotalClients") # On récupère le nombre total de client (et donc notre id à nous)
+        time.sleep(2)
+
         self.miningThread = threading.Thread(target=self.block, args=(self))
 
-    def sendData(self, command, params): 
+
+    def sendData(self, command, params = []): 
         """Envoie la commande à tout les pairs
         command: str avec la commande
         params: tableau de str avec les parametres"""
@@ -34,7 +52,7 @@ class Miner:
         self.p2p.sendData(contents)
         
 
-    def receivedData(self, content):  
+    def receivedData(self, contents):  
         command = contents["command"]
         params = contents["params"]
 
@@ -74,14 +92,6 @@ class Miner:
                 self.listPerson += person
         elif command == "getTotalClients":
             return {"command": "respondTotalClients", "params": [self.getTotalClients()]}
-        elif command == "respondTotalClients":
-            if self.idClient == -1: # Pour ignorer les requêtes suivantes à notre première réponse (supposée correcte)
-                self.idClient = params[0]
-                f = open(self.pathToHopitalList, "a")
-                f.write(str(self.publicKey[0]) + "%" + str(self.publicKey[1]) + '\n')
-                f.close()
-                self.sendData("respondHospitals", [self.getHospitals()])
-
 
 
         elif command == "addTransToBlock": # senderID puis transaction
@@ -152,6 +162,7 @@ class Miner:
             self.createAndStartThread()
 
     def block(self): 
+        print("Starting to Mine")
         lb = self.blockchain.getLastValidBlock() # Last Block
         blockId = lb.blockId + 1
         lbHash = lb.hashBlock()
@@ -177,7 +188,7 @@ class Miner:
     
     def receivedTrans(self,senderId,transaction) :
         signature = transaction.signature
-        f = open("listeHopital.txt", "r")
+        f = open(self.pathToHopitalList, "r")
         publicKey = f[senderId]
 
         s = ""
