@@ -4,7 +4,7 @@ from Blockchain import Blockchain
 from Block import Block
 from hashlib import sha256
 import threading
-
+import Transaction
 
 class Miner:
 
@@ -146,7 +146,8 @@ class Miner:
 
     def addTransToBlock(self, trans):
         self.transToBlock += trans
-        if len(transToBlock >= 5):
+        if len(self.transToBlock >= 5):
+            self.transToBlock = self.transToBlock[5:]
             #self.block() # Peut-être mettre dans un Thread plutôt 
             self.createAndStartThread()
 

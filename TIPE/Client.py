@@ -173,8 +173,8 @@ class Client:
         listTrans = block.transactions # Liste des transactions du blocs
         for trans in listTrans: # On regarde les transactions du blocs
             persFound = False
-            for pers in listPerson: # On boucle sur les personnes que l'on connait
-                if trans.personId == pers.personId: # Si la personne de la boucle est celle en rapport avec la transaction
+            for pers in self.listPerson:
+                if trans.personId == pers.personId:
                     persFound = True
                     malFound = False
                     for mal in pers.medicalHistory: # On boucle maintenant sur les maladies que l'on connait 
@@ -187,9 +187,9 @@ class Client:
                         pers.medicalHistory += [mal] # Et on ajoute la maladie à l'historique de la personne
             
                         
-            if not persFound: # Si on a jamais trouvé la personne de la transaction
-                pers = getUnknownPerson(trans.personId) # On récupère les infos de la personne du reste du réseau
-                if pers != None: # Si on a bien eu une réponse (sinon on fait rien parce qu'on est des victimes)
+            if not persFound:
+                pers = self.getUnknownPerson(trans.personId) # On récupère les infos de la personne du reste du réseau
+                if pers != None:
                     malFound = False               
                     for mal in pers.medicalHistory: # On refait comme avant à la recherche de la maladie
                         if mal.malId == trans.malId:
