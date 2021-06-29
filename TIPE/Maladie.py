@@ -5,7 +5,7 @@ class Maladie:
     def __init__(self, malId):
         self.malId = malId
         self.nom = Maladie.getMalName(id)
-        self.dates = [] # Chaines de caractères au format JJ/MM/AAAA
+        self.dates = [] # Chaines de caractères au format JJ;MM;AAAA
 
     def isInfected(self): 
         return len(self.dates) % 2 == 0

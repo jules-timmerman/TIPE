@@ -1,27 +1,28 @@
 from hashlib import sha256
+from pathlib import Path
 
 class Transaction:
     
 
-    def __init__(self, personId, maladieId, newDate, clientId, privateKey):
+    def __init__(self, personId, maladieId, newDate, clientId, privateKey = - 1):
         self.personId = personId    # id de la personne liée à la transaction
         self.maladieId = maladieId  # id de la maladie liée à la transaction
         self.newDate = newDate      # date à ajouter à la personne (que ce soit attrapée ou perdue)
         self.clientId = clientId    # nom de la personne qui a envoye la transaction
         
-        
-        s = ""
-        s += str(self.personId) + "|"
-        s += str(self.maladieId) + "|"
-        s += str(self.newDate) + "|"
-        s += str(self.clientId) 
+        if privateKey != -1:
+            s = ""
+            s += str(self.personId) + "|"
+            s += str(self.maladieId) + "|"
+            s += str(self.newDate) + "|"
+            s += str(self.clientId) 
             
-        hash = int.from_bytes(sha256(bytes(s, 'utf-8')).digest(), byteorder='big')
+            hash = int.from_bytes(sha256(bytes(s, 'utf-8')).digest(), byteorder='big')
         
-        hashSignature = pow(hash, privateKey[1], privateKey[0])
+            hashSignature = pow(hash, privateKey[1], privateKey[0])
 
-        self.signature = hashSignature  # Signature de la transaction
-                                    # Ici par l'hopital et donc fait avec la clé privée
+            self.signature = hashSignature  # Signature de la transaction
+                                            # Ici par l'hopital et donc fait avec la clé privée
         
     
     def transToString(self): # Séparateurs entre infos d'une transaction sont |
@@ -42,7 +43,8 @@ class Transaction:
         signature = int(aux[3])
         clientId = int(aux[4])
         
-        transaction = Transaction(personId, maladieId, newDate, clientId,signature)
+        transaction = Transaction(personId, maladieId, newDate, clientId)
+        transaction.signature = signature
         
         return transaction 
     
@@ -53,7 +55,10 @@ class Transaction:
         s += str(self.newDate) + "|"
         s += str(self.clientId) 
 
-        f = open("listeHopital.txt", "r")
+        p = Path('.')
+        hopitalFile = None
+
+        f = open("listeHopital8000.txt", "r") # TODO : essayer de trouver un fichier pour sûr
         g = f.readlines()
         h = g[self.clientId].split("%")
 

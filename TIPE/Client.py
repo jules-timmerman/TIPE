@@ -44,7 +44,7 @@ class Client:
             f.write(str(self.publicKey[0]) + "%" + str(self.publicKey[1]) + '\n')
             f.close()
 
-            self.blockchain.validBlocks = [Block(0,0, [], 0)]
+            #self.blockchain.validBlocks = [Block(0,0, [], 0)]
         else:
             for i in range(len(firstIPs)):
                 self.p2p.connect_with_node(firstIPs[i], firstPorts[i])
@@ -72,16 +72,16 @@ class Client:
         params = contents["params"]
 
         if command == "getAllBlocks":   # Envoie l'entièreté de la blockchain au param1 
-            return {"command": "respondAllBlocks", "params": [self.blockchain.validBlocksToString()]}
+            if self.blockchain.validBlocks != []:
+                return {"command": "respondAllBlocks", "params": [self.blockchain.validBlocksToString()]}
         elif command == "respondAllBlocks":   # C'est la commande reçu après avoir fait getAllBlocks
-            self.blockchain.alternateFollowingChains += params[0]
+            self.blockchain.alternateFollowingChains += [Blockchain.stringToValidBlocks(params[0])]
         elif command == "getHospitals":
             return {"command": "respondHospitals", "params": [self.getHospitals()]}
         elif command == "respondHospitals":
             self.receiveAllHospitals(params[0])
         elif command == "newBlock":
             block = Block.stringToBlock(params[0])
-            time.sleep(5) # On attends de traiter les réponses
             if block.isValidBlock():
                 oldLength = len(self.blockchain.validBlocks) # On va s'interesser au changement de taille
                 self.blockchain.addBlockToAlternateChain(block)

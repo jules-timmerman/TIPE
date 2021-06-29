@@ -4,7 +4,7 @@ from Blockchain import Blockchain
 from Block import Block
 from hashlib import sha256
 import threading
-import Transaction
+from Transaction import Transaction
 import time
 
 class Miner:
@@ -57,21 +57,24 @@ class Miner:
         params = contents["params"]
 
         if command == "getAllBlocks":   # Envoie l'entièreté de la blockchain au param1 
-            return {"command": "respondAllBlocks", "params": [self.blockchain.validBlocksToString()]}
+            if self.blockchain.validBlocks != []:
+                return {"command": "respondAllBlocks", "params": [self.blockchain.validBlocksToString()]}
         elif command == "respondAllBlocks":   # C'est la commande reçu après avoir fait getAllBlocks
-            self.blockchain.alternateFollowingChains += params[0]
+            self.blockchain.alternateFollowingChains += [Blockchain.stringToValidBlocks(params[0])]
         elif command == "getHospitals":
             return {"command": "respondHospitals", "params": [self.getHospitals()]}
         elif command == "respondHospitals":
             self.receiveAllHospitals(params[0])
         elif command == "newBlock":
             block = Block.stringToBlock(params[0])
-            time.sleep(5) # On attends de traiter les réponses
             if block.isValidBlock():
-                oldLength = len(self.blockchain.validBlocks) # On va s'interesser au changement de taille
+                if block.blockId == self.blockchain.getLastValidBlock().blockId + 1: # Le nouveau bloc recu est le même que celui sur lequel on travaillait
+                    self.miningThread.stop()    # TODO : En vrai il faudrait ne pas supprimer les transactions sur lesquels on travaillait pour pouvoir plutôt gérer sur les transactions présentes ou pas dans le bloc recu que l'id strictement
+                    if len(self.transToBlock) >= 5:
+                        self.CreateAndStartThread()
                 self.blockchain.addBlockToAlternateChain(block)
                 self.blockchain.chainUpdate()
-                newLength = len(self.blockchain.validBlocks) 
+
 
                 if newLength > oldLength: # Pour pouvoir parse les nouveaux blocs valides
                     for i in range(oldLength, newLength):
@@ -95,7 +98,7 @@ class Miner:
 
 
         elif command == "addTransToBlock": # senderID puis transaction
-            self.receivedTrans(params[0], params[1]) 
+            self.receivedTrans(Transaction.stringToTrans(params[0])) 
 
 
 
@@ -155,10 +158,26 @@ class Miner:
     # MINER FUNCTIONS
 
     def addTransToBlock(self, trans):
-        self.transToBlock += trans
-        if len(self.transToBlock >= 5):
-            self.transToBlock = self.transToBlock[5:]
+        self.transToBlock += [trans]
+        if len(self.transToBlock) >= 5:
             #self.block() # Peut-être mettre dans un Thread plutôt 
+            #for bcs in self.blockchain.alternateFollowingChains:
+            #    for b in bcs:
+            #        print(b.blockToString())
+            #    print("")
+            
+            self.blockchain.chainUpdate()
+
+            #for bcs in self.blockchain.alternateFollowingChains:
+            #    for b in bcs:
+            #        print(b.blockToString())
+            #    print("")
+
+            #print("")
+
+            #for b in self.blockchain.validBlocks:
+            #    print(b.blockToString())
+
             self.createAndStartThread()
 
     def block(self): 
@@ -170,6 +189,7 @@ class Miner:
         self.transToBlock = self.transToBlock[5:]
         
         blockTemp = Block(blockId, lbHash, trans)
+        #print(blockTemp.blockToString())
 
         hashTemp = blockTemp.hashBlock()
         i = 0
@@ -178,7 +198,9 @@ class Miner:
             hashTemp = blockTemp.hashBlockWithPOW(i)
         blockTemp.proofOfWork = i
 
-        # Il faut envoyer le bloc aled
+        
+        self.blockchain.addBlockToAlternateChain(blockTemp)
+
         self.sendBlock(blockTemp)
 
     def sendBlock(self, blockTemp): # Envoie le bloc au reste de réseau (A FAIRE PLUS TARD)
@@ -186,10 +208,10 @@ class Miner:
         if len(self.transToBlock) >= 5:
             self.CreateAndStartThread()
     
-    def receivedTrans(self,senderId,transaction) :
+    def receivedTrans(self,transaction) :
         signature = transaction.signature
         f = open(self.pathToHopitalList, "r")
-        publicKey = f[senderId]
+        publicKey = f.readlines()[transaction.clientId].split('%')
 
         s = ""
         s += str(transaction.personId) + "|"
@@ -197,9 +219,9 @@ class Miner:
         s += str(transaction.newDate) + "|"
         s += str(transaction.clientId) 
         
-        hash = int.from_bytes(sha256(s).digest(), byteorder='big')
+        hash = int.from_bytes(sha256(bytes(s, 'utf-8')).digest(), byteorder='big')
             
-        hashFromSignature = pow(signature, publicKey[1], publicKey [0])
+        hashFromSignature = pow(signature, int(publicKey[1]), int(publicKey[0]))
  
         if hashFromSignature == hash :
             self.addTransToBlock(transaction) 
@@ -207,5 +229,5 @@ class Miner:
         f.close()
 
     def createAndStartThread(self):
-        self.miningThread = threading.Thread(target=self.block, args=(self))
-        self.start()
+        self.miningThread = threading.Thread(target=self.block)
+        self.miningThread.start()

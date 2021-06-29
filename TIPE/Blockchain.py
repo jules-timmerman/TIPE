@@ -1,4 +1,4 @@
-import Block
+from Block import Block
 
 class Blockchain:
     
@@ -6,10 +6,10 @@ class Blockchain:
     N = 5 # Nombre de transactions par blocs (temporaire)
 
     def __init__(self):
-        self.validBlocks = []        # blocs 100% sûr qui peuvent être pris en compte
+        self.validBlocks = [Block(0 ,0 ,[] ,0)]      # blocs 100% sûr qui peuvent être pris en compte
         # Contient différentes alternatives de blockchain 
         # On va mettre toutes la blockchain dedans pour faciliter les comparaisons de taille
-        self.alternateFollowingChains = [[]]  
+        self.alternateFollowingChains = []  
         
 
     def alreadyInAlternate(self,l) :
@@ -69,8 +69,22 @@ class Blockchain:
         validBlocks = []
         
         for block in aux :
-            validBlocks += [block.blockToString()]
+            validBlocks += [Block.stringToBlock(block)]
 
         return validBlocks
+
+    def printBlockchainAndAll(self):
+        print("alternate")
+
+        for bcs in self.alternateFollowingChains:
+            for b in bcs:
+                print(b.blockToString())
+            print("--------------")
+
+        print("\n\n")
+        print("valid")
+
+        for b in self.validBlocks:
+            print(b.blockToString())
 
 
