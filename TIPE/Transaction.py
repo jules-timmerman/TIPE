@@ -52,7 +52,7 @@ class Transaction:
         s += str(self.clientId) 
 
         f = open("listeHopital.txt", "r")
-        g = f.getLines()
+        g = f.readlines()
         h = g[clientId].split("%")
 
         hash = int.from_bytes(sha256(s).digest(), byteorder='big')
