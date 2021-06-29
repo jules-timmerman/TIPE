@@ -4,7 +4,7 @@ from Blockchain import Blockchain
 from Block import Block
 from hashlib import sha256
 import threading
-
+import Transaction
 
 class Miner:
 
@@ -76,8 +76,7 @@ class Miner:
 
     def addTransToBlock(self, trans):
         self.transToBlock += trans
-        if len(transToBlock >= 5):
-            self.transToBlock = self.transToBlock[5:]
+        if len(self.transToBlock >= 5):
             #self.block() # Peut-être mettre dans un Thread plutôt 
             self.createAndStartThread()
 
@@ -86,6 +85,7 @@ class Miner:
         blockId = lb.blockId + 1
         lbHash = lb.hashBlock()
         trans = self.transToBlock[0:5]
+        self.transToBlock = self.transToBlock[5:]
         
         blockTemp = Block(blockId, lbHash, trans)
 
@@ -135,7 +135,7 @@ class Miner:
         return s
 
     def receiveAllHospitals(s):
-        linesOri = getHospitals().split("/")
+        linesOri = Miner.getHospitals().split("/")
         
         f = open("listeHopital.txt", "w")
         linesNew = s.split("/")

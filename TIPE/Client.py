@@ -118,7 +118,7 @@ class Client:
         listTrans = block.transactions # Liste des transactions du blocs
         for trans in listTrans:
             persFound = False
-            for pers in listPerson:
+            for pers in self.listPerson:
                 if trans.personId == pers.personId:
                     persFound = True
                     malFound = False
@@ -133,7 +133,7 @@ class Client:
             
                         
             if not persFound:
-                pers = getUnknownPerson(trans.personId) # On récupère les infos de la personne du reste du réseau
+                pers = self.getUnknownPerson(trans.personId) # On récupère les infos de la personne du reste du réseau
                 if pers != None:
                     malFound = False               
                     for mal in pers.medicalHistory:

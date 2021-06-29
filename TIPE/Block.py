@@ -2,6 +2,7 @@ import Transaction
 import hashlib
 
 
+
 def hash(sum, pow): # Sum en str et pow un nombre
      return hashlib.sha256((sum + str(pow)).encode("utf-8"))
 
