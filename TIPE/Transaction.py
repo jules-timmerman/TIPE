@@ -15,7 +15,7 @@ class Transaction:
             s += str(self.maladieId) + "|"
             s += str(self.newDate) + "|"
             s += str(self.clientId) 
-            signature = int.from_bytes(sha256(s).digest(), byteorder='big')
+            signature = int.from_bytes(sha256(bytes(s, 'utf-8')).digest(), byteorder='big')
             self.signature = signature  # Signature de la transaction
                                     # Ici par l'hopital et donc fait avec la clé privée
         
@@ -55,7 +55,7 @@ class Transaction:
         g = f.getLines()
         h = g[clientId].split("%")
 
-        hash = int.from_bytes(sha256(s).digest(), byteorder='big')
+        hash = int.from_bytes(sha256(bytes(s, 'utf-8')).digest(), byteorder='big')
         hashFromSignature = pow(signature, int(h[1]),int(h[0]))
 
         f.close()
