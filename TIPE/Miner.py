@@ -70,8 +70,6 @@ class Miner:
                         p = person
             if not isFound:
                 self.listPerson += person
-
-
         elif command == "addTransToBlock": # senderID puis transaction
             self.receivedTrans(params[0], params[1]) 
 

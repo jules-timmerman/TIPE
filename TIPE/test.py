@@ -1,7 +1,22 @@
 from Client import Client
-import socket
+from Miner import Miner
+import time
 
-c1 = Client(8010)
-c2 = Client(8011, [socket.gethostbyname(socket.gethostname())], [8010])
+startPort = 8000
+c0 = Client(startPort)
+c0.idClient = 0
 
-c2.sendData("getAllBlocks", ["OUI"])
+clients = []
+miners = []
+N = 5
+
+for i in range(1, N):
+    clients += [Client(startPort + i, ["127.0.0.1"], [startPort])]
+
+time.sleep(300)
+
+for c in clients:
+    print(c.idClient)
+
+
+

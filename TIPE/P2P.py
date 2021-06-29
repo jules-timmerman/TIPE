@@ -38,7 +38,7 @@ class P2P (Node):
             if s != None:
                 self.connect_with_node(data["globalIP"], data["port"])
                 for n in self.nodes_outbound: 
-                    if n.host == host and n.port == port:
+                    if n.host == data["globalIP"] and n.port == data["port"]:
                         self.send_to_node(n, {"id":time.time(), "globalIP": self.globalIP, "port": self.port, "content":s}) # Il faut savoir à qui renvoyer
             self.forwardData(data)
         

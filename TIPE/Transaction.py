@@ -25,18 +25,20 @@ class Transaction:
         s += str(self.personId) + "|"
         s += str(self.maladieId) + "|"
         s += str(self.newDate) + "|"
-        s += str(self.signature) + "|"
+        s += str(self.signature[0]) + "%" + str(self.signature[1]) + "|"
         s += str(self.clientId) 
         return s
 
     @staticmethod
     def stringToTrans (string) :
         aux = string.split("|")
-        personId = aux[0]
-        maladieId = aux[1]
+        personId = int(aux[0])
+        maladieId = int(aux[1])
         newDate = aux[2]
-        signature = aux[3]
-        clientId = aux[4]
+        
+        aux2 = aux[3].split("%")
+        signature = [int(aux2[0]),int(aux2[1])]
+        clientId = int(aux[4])
         
         transaction = Transaction(personId, maladieId, newDate, clientId,signature)
         
@@ -47,11 +49,18 @@ class Transaction:
         s += str(self.personId) + "|"
         s += str(self.maladieId) + "|"
         s += str(self.newDate) + "|"
-        s += str(self.signature) + "|"
         s += str(self.clientId) 
 
-        signature = int.from_bytes(sha256(s).digest(), byteorder='big')
+        f = open("listeHopital.txt", "r")
+        g = f.getLines()
+        h = g[clientId].split("%")
 
-        if self.signature == signature :
+        hash = int.from_bytes(sha256(s).digest(), byteorder='big')
+        hashFromSignature = pow(signature, int(h[1]),int(h[0]))
+
+        f.close()
+
+        if hashFromSignature == hash :
+
             return True
         return False
