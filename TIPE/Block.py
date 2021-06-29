@@ -22,7 +22,7 @@ class Block:
         toHash += str(self.blockId)
         toHash += str(self.lbHash)
         for v in self.transactions:
-            toHash += v.toString()
+            toHash += v.transToString()
         self.__sumTemp__ = toHash
 
     def hashBlock(self): # Calcul le hash d'un bloc
@@ -46,12 +46,12 @@ class Block:
             
         return resStr
 
-    @staticmethod   
+    @staticmethod              
     def stringToBlock (string) :
         aux1 = string.split("/")
-        blockId = aux1[0]
-        lbHash = aux1[1]
-        proofOfWork = aux1[2]
+        blockId = int(aux1[0])
+        lbHash = int(aux1[1])
+        proofOfWork = int(aux1[2])
 
         transactions = []
         aux2 = (aux1[3]).split("@")
