@@ -20,6 +20,10 @@ class Block:
         self.transactions = transactions  # Liste de Transaction
         self.__sumTemp__ = self.__sum__() # Somme temporaire de tous les attributs sauf proof of work
     
+
+    def __eq__(self, other):
+        return self.blockId == other.blockId and self.lbHash == other.lbHash and self.proofOfWork == other.proofOfWork and self.transactions == other.transactions
+
     def __sum__(self):
         toHash = ""
         toHash += str(self.blockId)
