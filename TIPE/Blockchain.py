@@ -90,7 +90,6 @@ class Blockchain:
 
     @staticmethod
     def stringToAlternateFollowingChains(string) :
-        
         res1 = []
         
         split1 = string.split("#")
@@ -106,6 +105,32 @@ class Blockchain:
         
         return res1
 
+    def blockchainToString(self) :
+        resStr = ""
+
+        resStr += self.alternateFollowingChainsToString()
+
+        resStr += "µ"
+
+        resStr += self.validBlocksToString()
+
+        return resStr
+
+    @staticmethod
+    def stringToBlockchain(string) :
+
+        split = string.split("µ")
+
+        alternateFollowingChains = Blockchain.stringToAlternateFollowingChains(split[0])
+
+        valibBlocks = Blockchain.stringToValidBlocks(split[1])
+
+        blockchain = Blockchain()
+
+        blockchain.alternateFollowingChains = alternateFollowingChains
+        blockchain.validBlocks = valibBlocks
+        
+        return blockchain
 
     @staticmethod
     def stringToValidBlocks(string) :
