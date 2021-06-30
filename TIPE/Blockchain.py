@@ -41,13 +41,18 @@ class Blockchain:
 
 
     def addBlockToAlternateChain(self,block) :
-        pos = block.blockId
-        for (i,val) in enumerate(self.alternateFollowingChains) :
-            if val[pos-1].hashBlock() == block.lbHash :                             # On ne garde que les chaînes dont l'id du dernier block correspond
-                if val[pos: ] != [] :                       
-                    self.alternateFollowingChains += [ val[ : pos-1] + [block]]      # S'il existe des éléments après la chaîne que l'on veut compléter on en créer une nouvelle
-                else :
-                    self.alternateFollowingChains[i] =  ( val[ : pos-1] + [block] )  # Sinon on modifie le block en rajoutant le block d'entrée
+        Id = block.blockId
+        if Id == 0 and self.alternateFollowingChains == [] :
+            self.alternateFollowingChains = [[block]]
+        
+        elif Id != 0 :
+            for (i,val) in enumerate(self.alternateFollowingChains) :
+                if len(val) > (Id-1) :
+                    if (val[Id-1]).hashBlock() == block.lbHash :
+                        if val[Id:] == [] :
+                            self.alternateFollowingChains[i] = val + [block]
+                        else :
+                            self.alternateFollowingChains += [val[:Id-1] + [block]]
 
 
     def validBlocksToString(self) : 
