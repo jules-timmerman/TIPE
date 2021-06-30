@@ -43,8 +43,6 @@ class Client:
             f = open(self.pathToHopitalList, "w")
             f.write(str(self.publicKey[0]) + "%" + str(self.publicKey[1]) + '\n')
             f.close()
-
-            #self.blockchain.validBlocks = [Block(0,0, [], 0)]
         else:
             for i in range(len(firstIPs)):
                 self.p2p.connect_with_node(firstIPs[i], firstPorts[i])
@@ -71,11 +69,22 @@ class Client:
         command = contents["command"]
         params = contents["params"]
 
-        if command == "getAllBlocks":   # Envoie l'entièreté de la blockchain au param1 
+        if command == "getAllBlocks":
             if self.blockchain.validBlocks != []:
                 return {"command": "respondAllBlocks", "params": [self.blockchain.validBlocksToString()]}
         elif command == "respondAllBlocks":   # C'est la commande reçu après avoir fait getAllBlocks
-            self.blockchain.alternateFollowingChains += [Blockchain.stringToValidBlocks(params[0])]
+            bc = Blockchain.stringToValidBlocks(params[0])
+
+            #for b in bc:
+            #    print(b.blockToString())
+            #print("----------")
+            #for bcs in self.blockchain.alternateFollowingChains:
+            #    for b in bcs:
+            #        print(b.blockToString())
+            #    print("****************")
+
+            if not self.blockchain.alreadyInAlternate(bc):
+                self.blockchain.alternateFollowingChains += [bc]
         elif command == "getHospitals":
             return {"command": "respondHospitals", "params": [self.getHospitals()]}
         elif command == "respondHospitals":

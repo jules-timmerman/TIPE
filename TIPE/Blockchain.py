@@ -9,7 +9,7 @@ class Blockchain:
         self.validBlocks = [Block(0 ,0 ,[] ,0)]      # blocs 100% sûr qui peuvent être pris en compte
         # Contient différentes alternatives de blockchain 
         # On va mettre toutes la blockchain dedans pour faciliter les comparaisons de taille
-        self.alternateFollowingChains = []  
+        self.alternateFollowingChains = [[Block(0 ,0 ,[] ,0)]]  
         
 
     def alreadyInAlternate(self,l) :

@@ -25,6 +25,10 @@ class Transaction:
                                             # Ici par l'hopital et donc fait avec la clé privée
         
     
+    def __eq__(self, other):
+        return self.personId == other.personId and self.maladieId == other.maladieId and self.newDate == other.newDate and self.clientId == other.clientId and self.signature == other.signature
+
+
     def transToString(self): # Séparateurs entre infos d'une transaction sont |
         s = ""
         s += str(self.personId) + "|"
