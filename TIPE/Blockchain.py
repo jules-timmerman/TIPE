@@ -57,13 +57,49 @@ class Blockchain:
         
         resStr = ""
 
-        for i in range(len(validBlocks)) :    
-            strBlock = (validBlocks[i]).blockToString()
+        for block in validBlocks :    
+            strBlock = block.blockToString()
             resStr += strBlock
             resStr += "!" 
         resStr = resStr[:-1]
 
         return resStr
+
+    def alternateFollowingChainsToString(self) :
+
+        alternateFollowingChains = self.alternateFollowingChains
+        resStr = ""
+
+        for chain in alternateFollowingChains :
+            for block in chain :
+                strBlock = block.blockToString()
+                resStr += strBlock
+                resStr += "£"
+            resStr= resStr[:-1]
+            resStr = "#" 
+        resStr = resStr[:-1]
+        
+        return resStr
+
+    def stringToAlternateFollowingChains(string) :
+        
+        res1 = []
+        
+        split1 = string.split("#")
+        
+        for chain in split1 :
+            split2 = chain.split("£")
+            
+            for strBlock in split2 :
+                aux = Block.stringToBlock(strBlock)
+                res2 = res2 + [aux]
+
+            res1 += [res2]
+        
+        return res1
+
+
+
 
     @staticmethod
     def stringToValidBlocks(string) :
