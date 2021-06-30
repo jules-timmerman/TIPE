@@ -16,7 +16,7 @@ for i in range(1,NClient):
 
 transs = []
 
-for i in range(7):
+for i in range(17):
 	transs += [c0.createTrans(random.randint(0,2), random.randint(0,4) , str(random.randint(1,30)) + ";" + str(random.randint(1,12)) + ";" + str(random.randint(1970,2020)))]
 
 print("E")

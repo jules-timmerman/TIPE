@@ -20,6 +20,8 @@ class Miner:
         self.blockchain = Blockchain()
         self.transToBlock = []      # Liste de transactions à ajouter 
 
+        self.idToMine = 0 # id du prochain bloc à miner (initialiser à 0 car incrémenter dans createThreadAndStart
+
         self.listPerson = [] # Liste de personne (pas forcément nécessaire mais la banane de TF2)
 
         self.pathToHopitalList = "listeHopital" + str(port) + ".txt" # Pour les tests utiles pour avoir différent .txt
@@ -70,7 +72,9 @@ class Miner:
             #        print(b.blockToString())
             #    print("****************")
 
-            if not (bc in self.blockchain.alternateFollowingChains):
+            # TODO : Certains blocs ont l'air d'être dupliqué (celui de départ n'est pas compté) donc à gérer
+
+            if not self.blockchain.alreadyInAlternate(bc):
                 self.blockchain.alternateFollowingChains += [bc]
         elif command == "getHospitals":
             return {"command": "respondHospitals", "params": [self.getHospitals()]}
@@ -81,6 +85,7 @@ class Miner:
             if block.isValidBlock():
                 if block.blockId == self.blockchain.getLastValidBlock().blockId + 1: # Le nouveau bloc recu est le même que celui sur lequel on travaillait
                     self.miningThread.stop()    # TODO : En vrai il faudrait ne pas supprimer les transactions sur lesquels on travaillait pour pouvoir plutôt gérer sur les transactions présentes ou pas dans le bloc recu que l'id strictement
+                    #self.idToMine += 1     # Gerer dans createThread...
                     if len(self.transToBlock) >= 5:
                         self.CreateAndStartThread()
                 self.blockchain.addBlockToAlternateChain(block)
@@ -171,36 +176,20 @@ class Miner:
     def addTransToBlock(self, trans):
         self.transToBlock += [trans]
         if len(self.transToBlock) >= 5:
-            #self.block() # Peut-être mettre dans un Thread plutôt 
-            #for bcs in self.blockchain.alternateFollowingChains:
-            #    for b in bcs:
-            #        print(b.blockToString())
-            #    print("")
-            
             self.blockchain.chainUpdate()
-
-            #for bcs in self.blockchain.alternateFollowingChains:
-            #    for b in bcs:
-            #        print(b.blockToString())
-            #    print("")
-
-            #print("")
-
-            #for b in self.blockchain.validBlocks:
-            #    print(b.blockToString())
-
             self.createAndStartThread()
 
     def block(self): 
         print("Starting to Mine")
-        lb = self.blockchain.getLastValidBlock() # Last Block
-        blockId = lb.blockId + 1
+        lb = self.blockchain.validBlocks[self.idToMine-1] # Last Block
+        blockId = self.idToMine
         lbHash = lb.hashBlock()
         trans = self.transToBlock[0:5]
         self.transToBlock = self.transToBlock[5:]
         
         blockTemp = Block(blockId, lbHash, trans)
-        #print(blockTemp.blockToString())
+
+        print("Searching Proof of work for : " + blockTemp.blockToString())
 
         hashTemp = blockTemp.hashBlock()
         i = 0
@@ -209,9 +198,8 @@ class Miner:
             hashTemp = blockTemp.hashBlockWithPOW(i)
         blockTemp.proofOfWork = i
 
-        
+        #self.idToMine += 1 # Gerer dans createThread...
         self.blockchain.addBlockToAlternateChain(blockTemp)
-
         self.sendBlock(blockTemp)
 
     def sendBlock(self, blockTemp): # Envoie le bloc au reste de réseau (A FAIRE PLUS TARD)
@@ -240,5 +228,6 @@ class Miner:
         f.close()
 
     def createAndStartThread(self):
+        self.idToMine += 1
         self.miningThread = threading.Thread(target=self.block)
         self.miningThread.start()

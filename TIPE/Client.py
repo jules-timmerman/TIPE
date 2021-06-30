@@ -83,6 +83,8 @@ class Client:
             #        print(b.blockToString())
             #    print("****************")
 
+            # TODO : Certains blocs ont l'air d'être dupliqué (celui de départ n'est pas compté) donc à gérer
+
             if not self.blockchain.alreadyInAlternate(bc):
                 self.blockchain.alternateFollowingChains += [bc]
         elif command == "getHospitals":
