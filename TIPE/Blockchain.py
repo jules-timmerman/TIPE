@@ -4,6 +4,7 @@ class Blockchain:
     
 
     N = 5 # Nombre de transactions par blocs (temporaire)
+    NAvance = 2 # Nombre de blocs d'avance pour valider
 
     def __init__(self):
         self.validBlocks = [Block(0 ,0 ,[] ,0)]      # blocs 100% sûr qui peuvent être pris en compte
@@ -13,6 +14,8 @@ class Blockchain:
         
 
     def alreadyInAlternate(self,l) :
+        if len(l) == 1:
+            return True
         for liste in self.alternateFollowingChains :
             if liste == l :
                 return True      
@@ -29,10 +32,14 @@ class Blockchain:
                 maxLength = len(val)                                    
             elif lengthSecond <= len(val) <= maxLength : # On augmente la valeur de la longeur de la 2ème liste si elle est inférieur à maxLength
                     lengthSecond = len(val)                       # et si la longueur de la 2ème liste est inférieur à len(val)
-        if maxLength > (lengthSecond + 2) :       
-            returnValue = self.alternateFollowingChains[posFirst][:-5]
-            self.validBlocks += returnValue    # On ne rajoute des blocks que lorsqu'on a suffisamment d'éléments par rapport aux autres chaînes et qu'on pas de doublons
-            self.alternateFollowingChains = [self.alternateFollowingChains[posFirst][-5:]]
+        
+        if maxLength > (lengthSecond + Blockchain.NAvance) : 
+            print("UPDATING\n")
+            returnValue = self.alternateFollowingChains[posFirst][:-Blockchain.NAvance] # On va chercher tout les blocs sauf les derniers d'avances
+
+            self.validBlocks = returnValue    # On ne rajoute des blocks que lorsqu'on a suffisamment d'éléments par rapport aux autres chaînes et qu'on pas de doublons
+            self.alternateFollowingChains = [self.alternateFollowingChains[posFirst]]
+            
         return returnValue # Renvoie ce qui a été rajouté
 
 
@@ -81,6 +88,7 @@ class Blockchain:
         
         return resStr
 
+    @staticmethod
     def stringToAlternateFollowingChains(string) :
         
         res1 = []
@@ -97,8 +105,6 @@ class Blockchain:
             res1 += [res2]
         
         return res1
-
-
 
 
     @staticmethod

@@ -7,6 +7,7 @@ from Person import Person
 import time
 from Block import Block
 from Transaction import Transaction
+from Maladie import Maladie
 
 
 class Client:
@@ -94,14 +95,13 @@ class Client:
         elif command == "newBlock":
             block = Block.stringToBlock(params[0])
             if block.isValidBlock():
-                oldLength = len(self.blockchain.validBlocks) # On va s'interesser au changement de taille
-                self.blockchain.addBlockToAlternateChain(block)
-                self.blockchain.chainUpdate()
-                newLength = len(self.blockchain.validBlocks) 
 
-                if newLength > oldLength: # Pour pouvoir parse les nouveaux blocs valides
-                    for i in range(oldLength, newLength):
-                        self.parseBlock(self.blockchain.validBlocks[i])
+                self.blockchain.addBlockToAlternateChain(block)
+                ret = self.blockchain.chainUpdate()
+
+                #if ret != []:          # TODO: faire marcher ca
+                #    for b in ret:
+                #        self.parseBlock(b)
         elif command == "getPerson":
             p = self.getPerson(params[0])
             if p != None:
@@ -137,9 +137,7 @@ class Client:
 
     def getUnknownPerson(self, personId):
         self.sendData("getPerson", [personId])
-
-        time.sleep(5)
-
+        time.sleep(1)
         return self.getPerson(personId)
 
     def getHospitals(self):
@@ -193,11 +191,11 @@ class Client:
                     persFound = True
                     malFound = False
                     for mal in pers.medicalHistory: # On boucle maintenant sur les maladies que l'on connait 
-                        if mal.malId == trans.malId: # Une fois que l'on a trouvé la maladie en question
+                        if mal.malId == trans.maladieId: # Une fois que l'on a trouvé la maladie en question
                             mal.addDate(trans.newDate) # On ajoute la date
                             malFound = True
                     if not malFound: # Si on avait pas trouvé la maladie
-                        mal = Maladie(trans.malId) # On crée la maladie
+                        mal = Maladie(trans.maladieId) # On crée la maladie
                         mal.addDates(trans.newDate) # Et on ajoute la date
                         pers.medicalHistory += [mal] # Et on ajoute la maladie à l'historique de la personne
             
@@ -207,19 +205,19 @@ class Client:
                 if pers != None:
                     malFound = False               
                     for mal in pers.medicalHistory: # On refait comme avant à la recherche de la maladie
-                        if mal.malId == trans.malId:
+                        if mal.malId == trans.maladieId:
                             malFound = True
                             if trans.newDate not in mal.dates: # Si la date n'est pas déjà dedans (on a pu recevoir une info déjà mise à jour
                                 mal.addDate(trans.newDate)
                     if not malFound: # Si on a pas trouvé la maladie on va la rajouter
-                       mal = Maladie(trans.malId)
+                       mal = Maladie(trans.maladieId)
                        mal.addDates(trans.newDate)
                        pers.medicalHistory += [mal]
 
                     self.listPerson += [pers]
-            else:
-                p = Person(trans.personId, "Unknown")
-                self.listPerson += [p]
+                else:
+                    p = Person(trans.personId, "Unknown")
+                    self.listPerson += [p]
 
 
     def sendTrans(self, trans):

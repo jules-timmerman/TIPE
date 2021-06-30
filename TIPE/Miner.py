@@ -6,6 +6,7 @@ from hashlib import sha256
 import threading
 from Transaction import Transaction
 import time
+from Maladie import Maladie
 
 class Miner:
 
@@ -19,6 +20,7 @@ class Miner:
 
         self.blockchain = Blockchain()
         self.transToBlock = []      # Liste de transactions à ajouter 
+        self.lastMinedBlock = Block(0,0,[],0) # Le dernier bloc miné (pour avoir accès aux valeurs quand on mine)
 
         self.idToMine = 0 # id du prochain bloc à miner (initialiser à 0 car incrémenter dans createThreadAndStart
 
@@ -85,6 +87,7 @@ class Miner:
             if block.isValidBlock():
                 if block.blockId == self.blockchain.getLastValidBlock().blockId + 1: # Le nouveau bloc recu est le même que celui sur lequel on travaillait
                     self.miningThread.stop()    # TODO : En vrai il faudrait ne pas supprimer les transactions sur lesquels on travaillait pour pouvoir plutôt gérer sur les transactions présentes ou pas dans le bloc recu que l'id strictement
+                    self.lastMinedBlock = block
                     #self.idToMine += 1     # Gerer dans createThread...
                     if len(self.transToBlock) >= 5:
                         self.CreateAndStartThread()
@@ -127,9 +130,7 @@ class Miner:
 
     def getUnknownPerson(self, personId):
         self.sendData("getPerson", [personId])
-
-        time.sleep(5)
-
+        time.sleep(1)
         return self.getPerson(personId)
 
     def getHospitals(self):
@@ -181,9 +182,8 @@ class Miner:
 
     def block(self): 
         print("Starting to Mine")
-        lb = self.blockchain.validBlocks[self.idToMine-1] # Last Block
         blockId = self.idToMine
-        lbHash = lb.hashBlock()
+        lbHash = self.lastMinedBlock.hashBlock()
         trans = self.transToBlock[0:5]
         self.transToBlock = self.transToBlock[5:]
         
@@ -199,6 +199,7 @@ class Miner:
         blockTemp.proofOfWork = i
 
         #self.idToMine += 1 # Gerer dans createThread...
+        self.lastMinedBlock = blockTemp
         self.blockchain.addBlockToAlternateChain(blockTemp)
         self.sendBlock(blockTemp)
 
