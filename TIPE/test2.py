@@ -16,10 +16,8 @@ for i in range(1,NClient):
 
 transs = []
 
-for i in range(22):
+for i in range(37):
 	transs += [c0.createTrans(random.randint(0,2), random.randint(0,4) , str(random.randint(1,30)) + ";" + str(random.randint(1,12)) + ";" + str(random.randint(1970,2020)))]
-
-print("E")
 
 
 pathMiner = "D:\\Dev\\C++\\Visual Studio\\TIPE\\TIPE\\test11.py"
@@ -35,5 +33,8 @@ for t in transs:
 
 time.sleep(10)
 
-for p in c0.listPerson:
-    print(p.personToString())
+c0.blockchain.printBlockchainAndAll()
+
+
+#for p in c0.listPerson:
+#    print(p.personToString())

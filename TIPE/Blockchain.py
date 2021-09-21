@@ -34,7 +34,7 @@ class Blockchain:
                     lengthSecond = len(val)                       # et si la longueur de la 2ème liste est inférieur à len(val)
         
         if maxLength > (lengthSecond + Blockchain.NAvance) : 
-            print("UPDATING\n")
+            #print("UPDATING\n")
             returnValue = self.alternateFollowingChains[posFirst][:-Blockchain.NAvance] # On va chercher tout les blocs sauf les derniers d'avances
 
             self.validBlocks = returnValue    # On ne rajoute des blocks que lorsqu'on a suffisamment d'éléments par rapport aux autres chaînes et qu'on pas de doublons

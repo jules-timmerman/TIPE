@@ -19,47 +19,51 @@ class P2P (Node):
 
 
     def outbound_node_connected(self, connected_node):
-        print("outbound_node_connected: " + connected_node.host)
+        #print("outbound_node_connected: " + connected_node.host)
+        pass
         
     def inbound_node_connected(self, connected_node):
-        print("inbound_node_connected: " + connected_node.host)
+        #print("inbound_node_connected: " + connected_node.host)
+        pass
 
     def inbound_node_disconnected(self, connected_node):
-        print("inbound_node_disconnected: " + connected_node.host)
+        #print("inbound_node_disconnected: " + connected_node.host)
+        pass
 
     def outbound_node_disconnected(self, connected_node):
-        print("outbound_node_disconnected: " + connected_node.host)
+        #print("outbound_node_disconnected: " + connected_node.host)
+        pass
 
     def node_message(self, connected_node, data):
-        # print("node_message from " + str(connected_node.port) + ": " + str(data) + "\n")
-
         # Data un dictionnaire avec id: l'id unique pour éviter les boucles et data: le contenu du message
         # globalIp: l'adresse de retour de l'initiateur / port: le port
         id = data["id"]
         if not id in self.commandSendHistory:
             self.commandSendHistory += [id]
             content = data["content"]
-            print ("Receiving from " + str(connected_node.port) + " : " + str(content) + "\n")
 
             s = self.callbackMessage(content) # Potentiellement la commande à renvoyer (sous forme dict contents)
             if s != None:
                 self.connect_with_node(data["globalIP"], data["port"])
                 for n in self.nodes_outbound: 
                     if n.host == data["globalIP"] and n.port == data["port"]:
-                        print("Responding to :" + str(data["port"]) + " with " + str(s)  + "\n")
-                        self.send_to_node(n, {"id":time.time(), "globalIP": self.globalIP, "port": self.port, "content":s}) # Il faut savoir à qui renvoyer
+                        self.send_to_node(n, {"id":time.time(), "globalIP": self.globalIP, "port": self.port, "content":s})
             if content["command"][:7] != "respond": # Si ce n'est pas une réponse alors on forward
-                print("Forwarding : " + str(data)  + "\n")
-                
                 self.forwardData(data)
-        
+            
+
+                 
+            
+                 
+
         
     def node_disconnect_with_outbound_node(self, connected_node):
-        print("node wants to disconnect with oher outbound node: " + connected_node.host)
+        #print("node wants to disconnect with oher outbound node: " + connected_node.host)
+        pass
         
     def node_request_to_stop(self):
-        print("node is requested to stop!")
-
+        #print("node is requested to stop!")
+        pass
 
     def forwardData(self, data):
         self.send_to_nodes(data)
@@ -74,7 +78,6 @@ class P2P (Node):
         self.commandSendHistory += [id] # On ajoute aussi l'ID pour que le mec de base renvoit
         self.commandSendHistory += id
 
-        print("Sending : " + str(contents) + "\n")
+        #print("Sending : " + str(contents) + "\n")
 
         self.send_to_nodes({"id": id, "globalIP":self.globalIP, "port": self.port, "content":contents})
-

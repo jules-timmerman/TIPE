@@ -181,7 +181,7 @@ class Miner:
             self.createAndStartThread()
 
     def block(self): 
-        print("Starting to Mine")
+        #print("Starting to Mine")
         blockId = self.idToMine
         lbHash = self.lastMinedBlock.hashBlock()
         trans = self.transToBlock[0:5]
@@ -189,7 +189,7 @@ class Miner:
         
         blockTemp = Block(blockId, lbHash, trans)
 
-        print("Searching Proof of work for : " + blockTemp.blockToString())
+        #print("Searching Proof of work for : " + blockTemp.blockToString())
 
         hashTemp = blockTemp.hashBlock()
         i = 0
