@@ -1,10 +1,49 @@
-import sys
-from p2pnetwork.node import Node
+from P2P import P2P
+import socket
+from Blockchain import Blockchain
+from Crypto.PublicKey import RSA
+from hashlib import sha256
+from Person import Person
+import time
+from Block import Block
+from Transaction import Transaction
+from Maladie import Maladie
+
 
 from p2pnetwork.node import Node
 
-class MyOwnPeer2PeerNode (Node):
-    # Python class constructor
+class P2P (Node):
+    
+    def __init__(self, host, port, node_connues) :
+
+        self.host = host
+        self.port = port
+        self.historique_commandes = []
+
+    def initialisation(self, contenu) :
+        id = {"port": str(self.port) ,"host" : str(self.host) , "time" : str(time.time())}
+        message = { "id" : id , "contenu" : contenu }
+        
+        for nodes in self.nodes_outbound :
+            self.send_to_node(nodes, message)
+
+    
+    def transmettre_commandes(self, message, sender) :
+        if not message["id"] in self.historique_commandes :
+            self.historique_commandes += message["id"] 
+        for nodes in self.nodes_outbound :
+            if nodes.host != sender.host and nodes.port != sender.host :
+                self.send_to_node(nodes, message)
+
+    def traiter_commande(self, ):
+        pass
+
+
+    def return_to_sender(self, data):
+        pass
+
+
+
     def __init__(self, host, port, id=None, callback=None, max_connections=0):
         super(MyOwnPeer2PeerNode, self).__init__(host, port, id, callback, max_connections)
 
@@ -29,29 +68,13 @@ class MyOwnPeer2PeerNode (Node):
     def node_request_to_stop(self):
         print("node is requested to stop!")
 
-
-import time
-from requests import get
-
-from MyOwnPeer2PeerNode import MyOwnPeer2PeerNode
-
-node = MyOwnPeer2PeerNode("127.0.0.1", 10001)
-time.sleep(1)
-
-# Do not forget to start your node!
-node.start()
-time.sleep(1)
-
-# Connect with another node, otherwise you do not create any network!
-node.connect_with_node('127.0.0.1', 10002)
-time.sleep(2)
-
-# Example of sending a message to the nodes (dict).
-node.send_to_nodes({"message": "Hi there!"})
-
-time.sleep(5) # Create here your main loop of the application
-
-node.stop()
+    # OPTIONAL
+    # If you need to override the NodeConection as well, you need to
+    # override this method! In this method, you can initiate
+    # you own NodeConnection class.
+    def create_new_connection(self, connection, id, host, port):
+        return MyOwnNodeConnection(self, connection, id, host, port) 
 
 
-    class P2P(node) : 
+    
+   
