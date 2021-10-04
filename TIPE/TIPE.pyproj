@@ -31,6 +31,9 @@
     <Compile Include="Maladie.py">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="P2P.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="test11.py">
       <SubType>Code</SubType>
     </Compile>
@@ -43,7 +46,7 @@
     <Compile Include="test10.py">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="P2P.py">
+    <Compile Include="P2PVEVO.py">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Transaction.py">

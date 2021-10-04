@@ -35,5 +35,7 @@ for t in transs:
 
 time.sleep(10)
 
-for p in c0.listPerson:
-    print(p.personToString())
+c0.blockchain.printBlockchainAndAll()
+
+#for p in c0.listPerson:
+#    print(p.personToString())
