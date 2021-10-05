@@ -1,83 +1,125 @@
-from p2pnetwork.node import Node
+import socket
+from Blockchain import Blockchain
+from Crypto.PublicKey import RSA
+from hashlib import sha256
+from Person import Person
 import time
-from requests import get
+from Block import Block
+from Transaction import Transaction
+from Maladie import Maladie
+
+
+from p2pnetwork.node import Node
+
+N = 60
+def delete_pos(l,i) : 
+        res = []
+        for k in range(0,len(l)) :
+            if i != k :
+                res += [l[k]]
+        return res
 
 
 class P2P (Node):
-    def __init__(self, host, port, callbackMessage):
+    
+    def __init__(self, host, port, node_connues) :
         super(P2P, self).__init__(host, port, None)
-
         self.host = host
         self.port = port
+        self.historique_commandes = [] # liste de dictionnaires du type { "id" : id du message , "dernier_commanditaire" : dernier mec qui a demandé la commande, ???????????? "contenudemande" : réponses qu'il a reçu pour l'instant, liste de dictionnaires}
+        self.stockage_reponses = [] # liste de réponses du type { "réponse" : réponse , "client" : client }
+    
+    def transmettre_commandes(self, message, sender) :
+        booleen = False
+        id_message = message["id"]
+        for histo in self.historique_commandes :
+            if id_message == histo["id"] :
+                booleen = True
+        if not booleen : #on ne transmet que s'il n'est pas dans l'historique. Si il l'était, il aurait déjà été transmit
+                self.historique_commandes += { "id" : message["id"], "dernier_commanditaire" : sender.id}
+                self.traiter_commande(message)
+        for nodes in self.nodes_outbound :
+            if nodes.id != sender.id :
+                self.send_to_node(nodes, message)
+            ok = { "id" : str(self.id) + str(time.time()) , "contenu" : "" , "contenudemande" : [] , "parametre" : "ok" }
+            self.send_to_node(sender,ok)
+        booleen = False
+    
 
-        self.callbackMessage = callbackMessage
-        self.commandSendHistory = [] # Liste avec des ids de commandes pour éviter les boucles
-        # l'IP global de l'initiateur pour lui répondre
-        # On supposera ici que tout les ports sont ouverts et que ce sont les mêmes en extérieur et intérieur
-        #self.globalIP = get('https://api.ipify.org').text
-        self.globalIP = "127.0.0.1"
-
-
-    def outbound_node_connected(self, connected_node):
-        #print("outbound_node_connected: " + connected_node.host)
+    def return_to_sender(self, data, sender):
         pass
-        
-    def inbound_node_connected(self, connected_node):
-        #print("inbound_node_connected: " + connected_node.host)
-        pass
+    def recevoir_commande(self,message) :
+        pass    
 
-    def inbound_node_disconnected(self, connected_node):
-        #print("inbound_node_disconnected: " + connected_node.host)
-        pass
+    def sendData(self,contents) : 
+        data_id = str(self.id) + str(time.time())       
+        data = { "id" : data_id , "contenu" : contents , "contenudemande": [], "parametre" : None}
+        for node in self.nodes_outbound :
+            self.send_to_node(node,data)
 
-    def outbound_node_disconnected(self, connected_node):
-        #print("outbound_node_disconnected: " + connected_node.host)
-        pass
+
 
     def node_message(self, connected_node, data):
-        # Data un dictionnaire avec id: l'id unique pour éviter les boucles et data: le contenu du message
-        # globalIp: l'adresse de retour de l'initiateur / port: le port
-        id = data["id"]
-        if not id in self.commandSendHistory:
-            self.commandSendHistory += [id]
-            content = data["content"]
-
-            s = self.callbackMessage(content) # Potentiellement la commande à renvoyer (sous forme dict contents)
-            if s != None:
-                self.connect_with_node(data["globalIP"], data["port"])
-                for n in self.nodes_outbound: 
-                    if n.host == data["globalIP"] and n.port == data["port"]:
-                        self.send_to_node(n, {"id":time.time(), "globalIP": self.globalIP, "port": self.port, "content":s})
-            if content["command"][:7] != "respond": # Si ce n'est pas une réponse alors on forward
-                self.forwardData(data)
+            data_id = data["id"]
+            parametre = data["parametre"]
+            data_contenu = data["contenu"]
+            data_contenudemande = data["contenudemande"]
+            if parametre == None :
+                self.transmettre_commande(data,connected_node)
             
+            # compteur = N//2
+            # if parametre == "ok" :
+            #     while compteur != 0 :
+            #         time.sleep(1) 
+            #         compteur = compteur - 1
+            #         booleen = False
+            #     for histo in self.historique_commandes :
+            #             if histo["id"] == data_id :
+            #                 booleen = True
+            #             if booleen :
+            #                 data = { "id" : data_id , "contenu" : data_contenu, "contenudemande" : self.callbackMessage(data_contenu), "parametre" : "retour" }
+            #                 self.send_to_node(self,data)
+            #     booleen = False
 
-                 
-            
-                 
 
+            compteur = N//2
+
+            if parametre == "retour" :             
+                for (i,histo) in enumerate(self.historique_commandes) :
+                    if histo["id"] == data_id :    
+                        if histo["dernier_commanditaire"].id == self.id :
+                            for reponse in data["contenudemande"] :
+                                self.callbackMessage(reponse)
+                        else :
+                            retour = { "id" : data_id , "contenu" : data_contenu, "contenudemande" : data_contenudemande + self.callbackMessage(data_contenu), "parametre" : "retour" }
+                    
+                            self.send_to_node(histo["dernier_commanditaire"],retour)
+                    
+                            time.sleep(N)
+                            self.historique_commandes = delete_pos(self.historique_commandes,i)
+
+    def outbound_node_connected(self, connected_node):
+        print("outbound_node_connected: " + connected_node.id)
+        
+    def inbound_node_connected(self, connected_node):
+        print("inbound_node_connected: " + connected_node.id)
+
+    def inbound_node_disconnected(self, connected_node):
+        print("inbound_node_disconnected: " + connected_node.id)
+
+    def outbound_node_disconnected(self, connected_node):
+        print("outbound_node_disconnected: " + connected_node.id)
+
+    
+        #print("node_message from " + connected_node.id + ": " + str(data))
         
     def node_disconnect_with_outbound_node(self, connected_node):
-        #print("node wants to disconnect with oher outbound node: " + connected_node.host)
-        pass
+        print("node wants to disconnect with oher outbound node: " + connected_node.id)
         
     def node_request_to_stop(self):
-        #print("node is requested to stop!")
-        pass
+        print("node is requested to stop!")
 
-    def forwardData(self, data):
-        self.send_to_nodes(data)
 
-    def sendData(self, contents):
-        t = time.time()
 
-        unique = contents["command"]
-        for p in contents["params"]:
-            unique += str(p)
-        id = str(t) + unique
-        self.commandSendHistory += [id] # On ajoute aussi l'ID pour que le mec de base renvoit
-        self.commandSendHistory += id
-
-        #print("Sending : " + str(contents) + "\n")
-
-        self.send_to_nodes({"id": id, "globalIP":self.globalIP, "port": self.port, "content":contents})
+    
+   
