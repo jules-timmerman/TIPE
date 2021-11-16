@@ -39,8 +39,7 @@ N = 10**6
 #        #print (h)
 #    t2 = time.time()
 
-Nz = 7
-
+Nz = 15
 
 #for i in range(20):
 #    t1 = time.time()
@@ -65,7 +64,7 @@ b.hashBlockWithPOW(100)
 bool = True
 
 
-for k in range(40) :
+for k in range(100) :
     i = random.randint(0,10**Nz)
 
     t1 = time.time()
