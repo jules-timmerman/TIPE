@@ -4,6 +4,7 @@ from Transaction import Transaction
 import time
 from Crypto.PublicKey import RSA
 import random
+from openpyxl import Workbook
 
 
 
@@ -64,18 +65,20 @@ b.hashBlockWithPOW(100)
 
 bool = True
 
+workbook = Workbook()
+sheet = workbook.active
 
 for k in range(40) :
     i = random.randint(0,10**Nz)
-
     t1 = time.time()
     bool = True
     while bool :
-
         h = b.hashBlockWithPOW(i)
         if h[0:Nz] == Nz*"0" :
             t2 = time.time()
+            sheet["A"+str(k+2)]
             print(t2-t1)
             bool = False
         i += 1
 
+workbook.save(filename="valeurs.xlsx")
