@@ -75,7 +75,7 @@ for k in range(100) :
         h = b.hashBlockWithPOW(i)
         if h[0:Nz] == Nz*"0" :
             t2 = time.time()
-            sheet["A"+str(k+2)]
+            sheet["A"+str(k+2)] = (t2-t1)
             print(t2-t1)
             bool = False
         i += 1
