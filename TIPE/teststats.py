@@ -5,7 +5,8 @@ import time
 from Crypto.PublicKey import RSA
 import random
 from openpyxl import Workbook
-
+import numpy as np
+import matplotlib.pyplot as plt
 
 
 keyPair = RSA.generate(bits=1024)
@@ -61,23 +62,78 @@ Nz = 15
 
 b.hashBlockWithPOW(100)
 
+#try:
 
-bool = True
 
-workbook = Workbook()
-sheet = workbook.active
+#    N = 10 ** 6
 
-for k in range(100) :
-    i = random.randint(0,10**Nz)
-    t1 = time.time()
-    bool = True
-    while bool :
-        h = b.hashBlockWithPOW(i)
-        if h[0:Nz] == Nz*"0" :
-            t2 = time.time()
-            sheet["A"+str(k+2)] = (t2-t1)
-            print(t2-t1)
-            bool = False
-        i += 1
+#    bool = True
 
-workbook.save(filename="valeurs.xlsx")
+#    workbook = Workbook()
+#    sheet = workbook.active
+#    res = [0]*N
+
+#    for k in range(N) :
+#        i = random.randint(0,10**Nz)
+#        t1 = time.time()
+#        bool = True
+#        while bool :
+#            h = b.hashBlockWithPOW(i)
+#            if h[0:Nz] == Nz*"0" :
+#                t2 = time.time()
+#                #sheet["A"+str(k+2)] = (t2-t1)
+
+#                #print(t2-t1)
+#                res[int(((t2-t1)*100)//1)] += 1
+
+#                if k % 1000 == 0:
+#                    print(k)
+
+#                bool = False
+#            i += 1
+
+#    print(res)
+
+#    for k in range(0,N) :
+#        sheet["B"+str(k+1)] = res[k]
+#        sheet["A"+str(k+1)] = k
+
+#except KeyboardInterrupt:
+#    print("SAVING")
+#    for k in range(0,k) :
+#        sheet["B"+str(k+1)] = res[k]
+#        sheet["A"+str(k+1)] = k
+
+
+
+#workbook.save(filename="valeurs.xlsx")
+
+# Test de l'influence de Nz sur la probabilité de trouver un bloc pendant Tmax :
+
+
+Tmax = 7.54*(10**(-4))
+Th = 2.5*(10**(-5))
+
+
+def influsurtest1Nz(x) :
+    return  1-(1-2**(-x))**(Tmax/Th)
+
+Abs = np.linspace(0,100,2000)
+Ord = influsurtest1Nz(Abs)
+
+plt.plot(Abs,Ord)
+plt.show()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
