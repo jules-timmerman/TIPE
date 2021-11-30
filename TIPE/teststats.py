@@ -60,30 +60,29 @@ Nz = 15
 #    t = t2 - t1
 #    print(t)
 
-b.hashBlockWithPOW(100)
+#b.hashBlockWithPOW(100)
 
 #try:
 
 
-#    N = 10 ** 6
+#    N = 200
 
 #    bool = True
 
 #    workbook = Workbook()
 #    sheet = workbook.active
-#    res = [0]*N
+#    res = [0]*(10**4)
 
 #    for k in range(N) :
-#        i = random.randint(0,10**Nz)
+#        i = random.randint(0,2**Nz)
 #        t1 = time.time()
 #        bool = True
 #        while bool :
 #            h = b.hashBlockWithPOW(i)
 #            if h[0:Nz] == Nz*"0" :
 #                t2 = time.time()
-#                #sheet["A"+str(k+2)] = (t2-t1)
 
-#                #print(t2-t1)
+
 #                res[int(((t2-t1)*100)//1)] += 1
 
 #                if k % 1000 == 0:
@@ -105,7 +104,6 @@ b.hashBlockWithPOW(100)
 #        sheet["A"+str(k+1)] = k
 
 
-
 #workbook.save(filename="valeurs.xlsx")
 
 # Test de l'influence de Nz sur la probabilité de trouver un bloc pendant Tmax :
@@ -115,11 +113,11 @@ Tmax = 7.54*(10**(-4))
 Th = 2.5*(10**(-5))
 
 
-def influsurtest1Nz(x) :
-    return  1-(1-2**(-x))**(Tmax/Th)
+#def influsurtest1Nz(x) :
+#    return  1-(1-2**(-x))**(Tmax/Th)
 
 Abs = np.linspace(0,100,2000)
-Ord = influsurtest1Nz(Abs)
+Ord = f(Abs)
 
 plt.plot(Abs,Ord)
 plt.show()
