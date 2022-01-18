@@ -1,5 +1,7 @@
 from hashlib import sha256
-from pathlib import Path
+from pathlib import Pathz
+import random as rd
+
 
 class Transaction:
     
@@ -74,3 +76,25 @@ class Transaction:
         if hashFromSignature == hash :
             return True
         return False
+
+    @staticmethod
+    def randTrans(nbPatients,nbMaladies,idClient):
+        
+        idPatient = rd.randint(0,nbPatients)
+        idMaladie = rd.randint(0,nbMaladies)
+        
+        jour = rd.randint(0,31)
+        annee = rd.randint(1980,2031)
+        mois = rd.randint(0,13)
+        strDate = str(jour) + "/" + str(mois) + "/" + str(annee)
+        
+        keyPair = RSA.generate(bits=1024)
+        clePrivee = [keyPair.n , keyPair.d]
+
+        return  Transaction(idPatient, idMaladie, strDate, idClient, clePrivee)
+
+
+
+
+
+

@@ -1,6 +1,8 @@
 from Client import Client
+from Transaction import Transaction
 import time
 import sys
+
 
 
 startPort = 8000

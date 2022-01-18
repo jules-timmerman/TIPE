@@ -10,6 +10,8 @@ from Transaction import Transaction
 from Maladie import Maladie
 
 
+
+
 class Client:
     
     refIP = "" # A REMPLIR AVEC LA FUTURE IP DU RASPBERRY EN GROS OU EN TOUT CAS D'UNE ENTITE DE REFERENCE QUI SERA TOUJOURS DANS LA CHAINE
@@ -217,7 +219,7 @@ class Client:
                 else:
                     p = Person(trans.personId, "Unknown")
                     self.listPerson += [p]
-
+    
 
     def sendTrans(self, trans):
         self.sendData("addTransToBlock", [trans.transToString()])
