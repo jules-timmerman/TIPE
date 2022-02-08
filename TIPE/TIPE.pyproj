@@ -4,7 +4,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>12ab278d-d99e-44fc-b3cf-639d1604d354</ProjectGuid>
     <ProjectHome>.</ProjectHome>
-    <StartupFile>teststats.py</StartupFile>
+    <StartupFile>main.py</StartupFile>
     <SearchPath>
     </SearchPath>
     <WorkingDirectory>.</WorkingDirectory>
@@ -27,7 +27,14 @@
     <Compile Include="Blockchain.py">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="BlockchainHUD.py" />
     <Compile Include="Exemple clé publique privée.py" />
+    <Compile Include="Interface.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="main.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Maladie.py">
       <SubType>Code</SubType>
     </Compile>
@@ -40,6 +47,7 @@
     <Compile Include="test2.py">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="testQtGraphics.py" />
     <Compile Include="teststats.py">
       <SubType>Code</SubType>
     </Compile>
