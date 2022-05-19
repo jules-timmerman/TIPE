@@ -14,8 +14,8 @@ from Maladie import Maladie
 
 class Client:
     
-    refIP = "" # A REMPLIR AVEC LA FUTURE IP DU RASPBERRY EN GROS OU EN TOUT CAS D'UNE ENTITE DE REFERENCE QUI SERA TOUJOURS DANS LA CHAINE
-    refPort = -1
+    refIP = "127.0.0.1" # A REMPLIR AVEC LA FUTURE IP DU RASPBERRY EN GROS OU EN TOUT CAS D'UNE ENTITE DE REFERENCE QUI SERA TOUJOURS DANS LA CHAINE
+    refPort = 8000
 
 
     def __init__(self, port, firstIPs=[refIP], firstPorts=[refPort], isFirstClient = False): # firstIPs est un tableau de premiers pairs à qui se connecter idem firstPorts
@@ -33,7 +33,7 @@ class Client:
         self.privateKey = [keyPair.n, keyPair.d]
 
         self.pathToHopitalList = "listeHopital" + str(port) + ".txt" # Pour les tests utiles pour avoir différent .txt
-        f = open(self.pathToHopitalList, "w")
+        f = open(self.pathToHopitalList, "w") # TODO : EH ?
         f.close()
 
         #self.p2p = P2P(socket.gethostbyname(socket.gethostname()), port, self.receivedData)
@@ -57,7 +57,7 @@ class Client:
             time.sleep(2)
 
 
-    def sendData(self, command, params=[]): 
+    def sendData(self, command, params = []): 
         """Envoie la commande à tout les pairs
         command: str avec la commande
         params: tableau de str avec les parametres"""
@@ -101,7 +101,6 @@ class Client:
                 #if ret != []:          # TODO: faire marcher ca
                 #    for b in ret:
                 #        self.parseBlock(b)
-                pass
 
         elif command == "getPerson":
             p = self.getPerson(params[0])
@@ -120,12 +119,24 @@ class Client:
         elif command == "getTotalClients":
             return {"command": "respondTotalClients", "params": [self.getTotalClients()]}
         elif command == "respondTotalClients":
-            if self.idClient == -1: # Pour ignorer les requêtes suivantes à notre première réponse (supposée correcte)
+            # TODO : refaire un peu ici pas très propre
+            # Proposition : on met l'ID max puis après l'appel dans le constructeur on fait la suite dans le HopitalList
+            if self.idClient == -1: # Pour ignorer les requêtes suivant notre première réponse (supposée correcte)
                 self.idClient = params[0]
                 f = open(self.pathToHopitalList, "a")
-                f.write(str(self.publicKey[0]) + "%" + str(self.publicKey[1]) + '\n')
+                pk = str(self.publicKey[0]) + "%" + str(self.publicKey[1])
+                f.write(pk + '\n')
                 f.close()
-                self.sendData("respondHospitals", [self.getHospitals()])
+                self.sendData("notifyAll", [self.idClient, pk])
+                # Besoin d'une manière de notifier tout le monde que l'on est un nouveau client
+                # On va rajouter une requete "notifyAll" qui n'appelera pas à une réponse.
+                # Les paramatres seront l'id du nouveau client et sa clé public à rajouter
+        elif command == "notifyAll":
+            newId = params[0]
+            newPK = params[1]
+            self.noticeNew(newId, newPK)
+            
+
 
 
     # SHARED FUNCTIONS
@@ -151,7 +162,8 @@ class Client:
         f.close()
         return s
 
-    def receiveAllHospitals(self, s):
+
+    def receiveAllHospitals(self, s): # Garde l'ancien et rajoute "dans les trous" ce qu'il y a dans s
         linesOri = self.getHospitals().split("/")
         
         f = open(self.pathToHopitalList, "w")
@@ -172,6 +184,7 @@ class Client:
         else:
             for i in range(low, lenNew):
                 f.write(linesNew[i] + '\n')
+        f.close()
 
     def getTotalClients(self):
         f = open(self.pathToHopitalList, "r")
@@ -179,6 +192,9 @@ class Client:
         f.close()
         return size
 
+    def noticeNew(self, newId, newPK):
+        s = '/' * newId + newPK # On arnaque en mettant comme si la liste recu d'hopitals était rempli uniquement du nouveau au bon endroit
+        self.receiveAllHospitals(s)
 
     # CLIENT FUNCTIONS
 

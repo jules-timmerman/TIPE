@@ -38,9 +38,12 @@
     <Compile Include="Maladie.py">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="MCListWidgetItem.py" />
+    <Compile Include="MCChainWidget.py" />
     <Compile Include="P2P.py">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Simulation.py" />
     <Compile Include="test11.py">
       <SubType>Code</SubType>
     </Compile>

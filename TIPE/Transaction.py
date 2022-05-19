@@ -1,5 +1,5 @@
 from hashlib import sha256
-from pathlib import Pathz
+from pathlib import Path
 import random as rd
 
 
@@ -12,6 +12,8 @@ class Transaction:
         self.newDate = newDate      # date à ajouter à la personne (que ce soit attrapée ou perdue)
         self.clientId = clientId    # nom de la personne qui a envoye la transaction
         
+        self.signature = -1
+
         if privateKey != -1:
             s = ""
             s += str(self.personId) + "|"
@@ -77,21 +79,33 @@ class Transaction:
             return True
         return False
 
-    @staticmethod
-    def randTrans(nbPatients,nbMaladies,idClient):
+    #@staticmethod
+    #def randTransOLD(nbPatients,nbMaladies,idClient):
         
-        idPatient = rd.randint(0,nbPatients)
-        idMaladie = rd.randint(0,nbMaladies)
+    #    idPatient = rd.randint(0,nbPatients)
+    #    idMaladie = rd.randint(0,nbMaladies)
         
-        jour = rd.randint(0,31)
-        annee = rd.randint(1980,2031)
-        mois = rd.randint(0,13)
-        strDate = str(jour) + "/" + str(mois) + "/" + str(annee)
+    #    jour = rd.randint(0,31)
+    #    annee = rd.randint(1980,2031)
+    #    mois = rd.randint(0,13)
+    #    strDate = str(jour) + "/" + str(mois) + "/" + str(annee)
         
-        keyPair = RSA.generate(bits=1024)
-        clePrivee = [keyPair.n , keyPair.d]
+    #    keyPair = RSA.generate(bits=1024) # EH ?
+    #    clePrivee = [keyPair.n , keyPair.d]
 
-        return  Transaction(idPatient, idMaladie, strDate, idClient, clePrivee)
+    #    return  Transaction(idPatient, idMaladie, strDate, idClient, clePrivee)
+
+    @staticmethod
+    def randomTrans(clients, maxPersonId = 100, maxMaladieId = 20, minAnnee = 1970, maxAnnee = 2030):
+        personId = rd.randint(0,maxPersonId)
+        maladieId = rd.randint(0,maxMaladieId)
+        jour = rd.randint(0,31) # Aller c'est pas grave y'aura un 31 fevrier
+        mois = rd.randint(0,12)
+        annee = rd.randint(minAnnee, maxAnnee)
+        newDate = str(jour) + ";" + str(mois) + ";" + str(annee)
+        clientIndex = rd.randint(0,len(clients) - 1) # C'est inclu donc pas de OOR
+        client = clients[clientIndex]
+        return Transaction(personId, maladieId, newDate, client.idClient, client.privateKey)
 
 
 

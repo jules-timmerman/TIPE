@@ -10,10 +10,10 @@ def hash(sum, pow): # Sum en str et pow un nombre
 
 class Block:
 
-    NZeros = 7 # Nombre de zéros à mettre pour la PoW
+    NZeros = 18 # Nombre de zéros à mettre pour la PoW
 
 
-    def __init__(self, blockId, lbHash, transactions, proofOfWork = 0,__sumTemp__ = 0):
+    def __init__(self, blockId, lbHash, transactions, proofOfWork = 0, __sumTemp__ = 0):
         self.blockId = blockId  # Id du bloc pour avoir une idée de l'ordre
         self.lbHash = lbHash    # Hash du dernier bloc
         self.proofOfWork = proofOfWork    # Proof of work du hash
@@ -70,7 +70,7 @@ class Block:
         block = Block(blockId, lbHash, transactions, proofOfWork)
         return block
 
-    def isValidBlock(self) :
+    def isValidBlock(self) : # Il faudrait vérifier quelque part quelque chose genre assez d'argent
         if self.blockId == 0 :
             return True
         if self.hashBlock()[0:Block.NZeros] == "0" * Block.NZeros:
