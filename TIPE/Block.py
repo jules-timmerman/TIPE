@@ -14,7 +14,7 @@ class Block:
 
 
     def __init__(self, blockId, lbHash, transactions, proofOfWork = 0,__sumTemp__ = 0):
-        self.blockId = blockId  # Id du bloc pour avoir une idée de l'ordre
+        self.blockId = blockId  # Id du bloc, sa position dans la chaîne
         self.lbHash = lbHash    # Hash du dernier bloc
         self.proofOfWork = proofOfWork    # Proof of work du hash
         self.transactions = transactions  # Liste de Transaction

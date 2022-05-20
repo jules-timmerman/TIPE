@@ -8,7 +8,7 @@ class Transaction:
         self.personId = personId    # id de la personne liée à la transaction
         self.maladieId = maladieId  # id de la maladie liée à la transaction
         self.newDate = newDate      # date à ajouter à la personne (que ce soit attrapée ou perdue)
-        self.clientId = clientId    # nom de la personne qui a envoye la transaction
+        self.clientId = clientId    # nom de la personne qui a envoyée la transaction
         
         if privateKey != -1:
             s = ""

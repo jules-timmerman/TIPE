@@ -8,7 +8,7 @@ import random
 
 c0 = Client(8000, isFirstClient=True)
 
-pathClient = "D:\\Dev\\C++\\Visual Studio\\TIPE\\TIPE\\test10.py"
+pathClient = "D:\\Travail\\Prépa\\TIPE Vevo\\TIPE\\TIPE\\test10.py"
 NClient = 3
 for i in range(1,NClient):
     subprocess.run(['start','cmd.exe', '@cmd', '/k', 'python', pathClient, str(8000 + i)], shell=True)
@@ -22,7 +22,7 @@ for i in range(22):
 print("E")
 
 
-pathMiner = "D:\\Dev\\C++\\Visual Studio\\TIPE\\TIPE\\test11.py"
+pathMiner = "D:\\Travail\\Prépa\\TIPE Vevo\\TIPE\\TIPE\\test11.py"
 NMiner = 1
 for i in range(NMiner):
     subprocess.run(['start','cmd.exe', '@cmd', '/k', 'python', pathMiner, str(9000 + i)], shell=True)

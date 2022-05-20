@@ -7,10 +7,9 @@ class Blockchain:
     NAvance = 2 # Nombre de blocs d'avance pour valider
 
     def __init__(self):
-        self.validBlocks = [Block(0 ,0 ,[] ,0)]      # blocs 100% sûr qui peuvent être pris en compte
-        # Contient différentes alternatives de blockchain 
-        # On va mettre toutes la blockchain dedans pour faciliter les comparaisons de taille
+        self.validBlocks = [Block(0 ,0 ,[] ,0)]  # blocs valides 
         self.alternateFollowingChains = [[Block(0 ,0 ,[] ,0)]]  
+        # Contient toutes les différentes alternatives de blockchain 
         
 
     def alreadyInAlternate(self,l) :

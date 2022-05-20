@@ -16,15 +16,13 @@ class Miner:
 
     def __init__(self, port, firstIPs=[refIP], firstPorts=[refPort]):
 
-        print("MINER "+ str(port))
-
         self.blockchain = Blockchain()
         self.transToBlock = []      # Liste de transactions à ajouter 
-        self.lastMinedBlock = Block(0,0,[],0) # Le dernier bloc miné (pour avoir accès aux valeurs quand on mine)
+        self.lastMinedBlock = Block(0,0,[],0) # Le dernier bloc miné 
 
-        self.idToMine = 0 # id du prochain bloc à miner (initialiser à 0 car incrémenter dans createThreadAndStart
+        self.idToMine = 0 # id du prochain bloc à miner 
 
-        self.listPerson = [] # Liste de personne (pas forcément nécessaire mais la banane de TF2)
+        self.listPerson = [] # Liste de personne que le miner connaît
 
         self.pathToHopitalList = "listeHopital" + str(port) + ".txt" # Pour les tests utiles pour avoir différent .txt
         f = open(self.pathToHopitalList, "w")

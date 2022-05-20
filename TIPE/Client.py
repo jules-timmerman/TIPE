@@ -16,7 +16,7 @@ class Client:
     refPort = -1
 
 
-    def __init__(self, port, firstIPs=[refIP], firstPorts=[refPort], isFirstClient = False): # firstIPs est un tableau de premiers pairs à qui se connecter idem firstPorts
+    def __init__(self, port, firstIPs=[refIP], firstPorts=[refPort], isFirstClient = False): 
         
         print("CLIENT "+ str(port))
 
