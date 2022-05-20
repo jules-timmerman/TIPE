@@ -44,3 +44,5 @@ startPort = 8000
 c = Client (int(sys.argv[1]), ["127.0.0.1"], [8000])
 time.sleep(60)
 
+c.blockchain.printBlockchainAndAll()
+

@@ -338,3 +338,9 @@ ASALocalRun/
 
 # BeatPulse healthcheck temp database
 healthchecksdb
+/TIPE/listeHopital8000.txt
+/TIPE/listeHopital8001.txt
+/TIPE/listeHopital8002.txt
+/TIPE/listeHopital9000.txt
+.vscode/settings.json
+/TIPE/valeurs.xlsx

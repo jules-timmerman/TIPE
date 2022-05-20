@@ -175,8 +175,8 @@ class Miner:
     def addTransToBlock(self, trans):
         self.transToBlock += [trans]
         if len(self.transToBlock) >= 5:
-            self.blockchain.chainUpdate()
-            self.createAndStartThread()
+            self.blockchain.chainUpdate() # Pourquoi on update avant ? Au cas où j'imagine (ca fait pas de mal en soit)
+            self.createAndStartThread()   # Y'avait sûrement une raison quand même. La banane le retour
 
     def block(self): 
         print("Starting to Mine")
@@ -196,12 +196,13 @@ class Miner:
             hashTemp = blockTemp.hashBlockWithPOW(i)
         blockTemp.proofOfWork = i
 
-        #self.idToMine += 1 # Gerer dans createThread...
+        #self.idToMine += 1 # Geré dans createThread...
         self.lastMinedBlock = blockTemp
         self.blockchain.addBlockToAlternateChain(blockTemp)
-        self.sendBlock(blockTemp)
+        self.blockchain.chainUpdate() # Il va falloir update (ca coûte rien en tout cas et ca évite des désync entre les valids)
+        self.sendBlock(blockTemp)       # On aurait vraiment dû mettre l'update dans add...
 
-    def sendBlock(self, blockTemp): # Envoie le bloc au reste de réseau (A FAIRE PLUS TARD)
+    def sendBlock(self, blockTemp): # Envoie le bloc au reste de réseau (A FAIRE PLUS TARD) (c'est fait non ?)
         self.sendData("newBlock", [blockTemp.blockToString()])
         if len(self.transToBlock) >= 5:
             self.CreateAndStartThread()

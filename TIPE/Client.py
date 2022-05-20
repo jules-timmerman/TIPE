@@ -64,8 +64,6 @@ class Client:
 
         self.p2p.sendData(contents)
         
-
-
     def receivedData(self, contents): 
         command = contents["command"]
         params = contents["params"]
@@ -98,10 +96,11 @@ class Client:
 
                 self.blockchain.addBlockToAlternateChain(block)
                 ret = self.blockchain.chainUpdate()
-
                 #if ret != []:          # TODO: faire marcher ca
                 #    for b in ret:
                 #        self.parseBlock(b)
+                pass
+
         elif command == "getPerson":
             p = self.getPerson(params[0])
             if p != None:

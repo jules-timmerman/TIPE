@@ -4,7 +4,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>12ab278d-d99e-44fc-b3cf-639d1604d354</ProjectGuid>
     <ProjectHome>.</ProjectHome>
-    <StartupFile>test2.py</StartupFile>
+    <StartupFile>teststats.py</StartupFile>
     <SearchPath>
     </SearchPath>
     <WorkingDirectory>.</WorkingDirectory>
@@ -31,10 +31,16 @@
     <Compile Include="Maladie.py">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="P2P.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="test11.py">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="test2.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="teststats.py">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Utilisateur.py">
@@ -43,7 +49,7 @@
     <Compile Include="test10.py">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="P2P.py">
+    <Compile Include="P2PVEVO.py">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Transaction.py">
