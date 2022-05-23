@@ -15,7 +15,7 @@ class Block:
 
     def __init__(self, blockId, lbHash, transactions, proofOfWork = 0, __sumTemp__ = 0):
         self.blockId = blockId  # Id du bloc pour avoir une idée de l'ordre
-        self.lbHash = lbHash    # Hash du dernier bloc
+        self.lbHash = str(lbHash)    # Hash du dernier bloc (en str) (pour être sûr on refait str)
         self.proofOfWork = proofOfWork    # Proof of work du hash
         self.transactions = transactions  # Liste de Transaction
         self.__sumTemp__ = self.__sum__() # Somme temporaire de tous les attributs sauf proof of work

@@ -19,8 +19,8 @@ class Blockchain(QObject): # On hérite pour GRAPHICS
 
 
     def alreadyInAlternate(self,l) :
-        if len(l) == 1:
-            return True
+        #if len(l) == 1: # Bizarre ca, ca devait sûrement être le bloc origine mais bon
+        #    return True
         for liste in self.alternateFollowingChains :
             if liste == l :
                 return True      
@@ -48,7 +48,7 @@ class Blockchain(QObject): # On hérite pour GRAPHICS
             self.validBlocks = returnValue    # On ne rajoute des blocks que lorsqu'on a suffisamment d'éléments par rapport aux autres chaînes et qu'on pas de doublons
             self.alternateFollowingChains = [self.alternateFollowingChains[posFirst]] # On vide les alternates
         
-        self.updateSignal.emit() # GRAPHICS # J'ai pas l'impression que ca marche
+        #self.updateSignal.emit() # GRAPHICS # J'ai pas l'impression que ca marche
 
         return returnValue # Renvoie ce qui a été rajouté
 
@@ -68,50 +68,42 @@ class Blockchain(QObject): # On hérite pour GRAPHICS
                         elif val[Id] != block: # Il y avait des choses après notre bloc, on vérifie que c'est différent pour éviter de boucler à l'infini
                             self.alternateFollowingChains += [val[:Id] + [block]] # On crée une nouvelle chaîne pot
 
+    def addBlocksToAlternateChain(self, blocks):
+        for b in blocks:
+            self.addBlockToAlternateChain(b)
+    
+    @staticmethod
+    def blocksToString(blocks): # Méthode générale de conversion
+        resStr = ""
+
+        for b in blocks:
+            strBlock = b.blockToString()
+            resStr += strBlock
+            resStr +=  "!"
+        resStr = resStr[:-1]
+
+        return resStr
 
     def validBlocksToString(self) : 
-        validBlocks = self.validBlocks
-        
-        resStr = ""
-
-        for block in validBlocks :    
-            strBlock = block.blockToString()
-            resStr += strBlock
-            resStr += "!" 
-        resStr = resStr[:-1]
-
-        return resStr
+        return Blockchain.blocksToString(self.validBlocks)
 
     def alternateFollowingChainsToString(self) :
-
-        alternateFollowingChains = self.alternateFollowingChains
         resStr = ""
-
-        for chain in alternateFollowingChains :
-            for block in chain :
-                strBlock = block.blockToString()
-                resStr += strBlock
-                resStr += "£"
-            resStr= resStr[:-1]
-            resStr = "#" 
+        for chain in self.alternateFollowingChains :
+            resStr += Blockchain.blocksToString(chain)
+            resStr += "£" # Sep les pots
         resStr = resStr[:-1]
-        
-        return resStr
 
+        return resStr
     @staticmethod
     def stringToAlternateFollowingChains(string) :
         res1 = []
         
-        split1 = string.split("#")
+        split1 = string.split("£")
         
         for chain in split1 :
-            split2 = chain.split("£")
-            
-            for strBlock in split2 :
-                aux = Block.stringToBlock(strBlock)
-                res2 = res2 + [aux]
-
-            res1 += [res2]
+            c = Blockchain.stringToBlocks(chain)
+            res1 += [c]
         
         return res1
 
@@ -126,31 +118,35 @@ class Blockchain(QObject): # On hérite pour GRAPHICS
 
         return resStr
 
-    @staticmethod
-    def stringToBlockchain(string) :
+    #@staticmethod
+    #def stringToBlockchain(string) : # a priori jamais utilisé
 
-        split = string.split("µ")
+    #    split = string.split("µ")
 
-        alternateFollowingChains = Blockchain.stringToAlternateFollowingChains(split[0])
+    #    alternateFollowingChains = Blockchain.stringToAlternateFollowingChains(split[0])
 
-        valibBlocks = Blockchain.stringToValidBlocks(split[1])
+    #    valibBlocks = Blockchain.stringToValidBlocks(split[1])
 
-        blockchain = Blockchain()
+    #    blockchain = Blockchain()
 
-        blockchain.alternateFollowingChains = alternateFollowingChains
-        blockchain.validBlocks = valibBlocks
+    #    blockchain.alternateFollowingChains = alternateFollowingChains
+    #    blockchain.validBlocks = valibBlocks
         
-        return blockchain
+    #    return blockchain
+
+    @staticmethod
+    def stringToBlocks(string):
+        aux = string.split("!")
+        blocks = []
+        
+        for block in aux :
+            blocks += [Block.stringToBlock(block)]
+
+        return blocks
 
     @staticmethod
     def stringToValidBlocks(string) :
-        aux = string.split("!")
-        validBlocks = []
-        
-        for block in aux :
-            validBlocks += [Block.stringToBlock(block)]
-
-        return validBlocks
+        return Blockchain.stringToBlocks(string)
 
     def printBlockchainAndAll(self):
         print("alternate")

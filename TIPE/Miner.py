@@ -66,10 +66,20 @@ class Miner:
         params = contents["params"]
 
         if command == "getAllBlocks":
-            if self.blockchain.validBlocks != []:
-                return {"command": "respondAllBlocks", "params": [self.blockchain.validBlocksToString()]}
+            if self.blockchain.validBlocks != [] and self.blockchain.alternateFollowingChains != []:
+                return {"command": "respondAllBlocks", "params": [self.blockchain.validBlocksToString(), self.blockchain.alternateFollowingChainsToString()]}
+            elif self.blockchain.validBlocks != []:
+                return {"command": "respondAllBlocks", "params": [self.blockchain.validBlocksToString(), ""]}
+
         elif command == "respondAllBlocks":   # C'est la commande reçu après avoir fait getAllBlocks
             bc = Blockchain.stringToValidBlocks(params[0])
+            if not self.blockchain.alreadyInAlternate(bc):
+                self.blockchain.addBlocksToAlternateChain(bc)
+            if params[1] != "":
+                alternate = Blockchain.stringToAlternateFollowingChains(params[1])
+                for l in alternate:
+                    if not self.blockchain.alreadyInAlternate(l):
+                        self.blockchain.addBlocksToAlternateChain(l)
             
             #for b in bc:
             #    print(b.blockToString())
@@ -81,8 +91,6 @@ class Miner:
 
             # TODO : Certains blocs ont l'air d'être dupliqué (celui de départ n'est pas compté) donc à gérer
 
-            if not self.blockchain.alreadyInAlternate(bc):
-                self.blockchain.alternateFollowingChains += [bc]
         elif command == "getHospitals":
             return {"command": "respondHospitals", "params": [self.getHospitals()]}
         elif command == "respondHospitals":
