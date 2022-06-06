@@ -1,3 +1,4 @@
+from typing import List
 from P2P import P2P
 import socket
 from Blockchain import Blockchain
@@ -23,7 +24,7 @@ class Miner:
         self.port = port
 
         self.blockchain = Blockchain()
-        self.transToBlock = []      # Liste de transactions à ajouter 
+        self.transToBlock : List[Transaction] = []     # Liste de transactions à ajouter 
         self.lastMinedBlock = Block(0,0,[],0) # Le dernier bloc miné (pour avoir accès aux valeurs quand on mine)
 
         self.idToMine = 0 # id du prochain bloc à miner (initialiser à 0 car incrémenter dans createThreadAndStart

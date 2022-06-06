@@ -1,3 +1,4 @@
+from PySide6.QtGui import QFont
 from PySide6.QtWidgets import *
 from MCListWidgetItem import MCListWidgetItem
 from BlockchainHUD import BlockchainGraphics
@@ -31,12 +32,21 @@ class Interface(QWidget):
         self._buttonSimulation = QPushButton("Simulation", self)
         self._buttonPause = QPushButton("Pause", self)
 
+        self.font = QFont("Arial", 40) # Button font
+
         self._buttonTransaction.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
         self._buttonMineur.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
         self._buttonClient.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
         self._buttonEtat.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
         self._buttonSimulation.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
         self._buttonPause.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
+
+        self._buttonTransaction.setFont(self.font)
+        self._buttonMineur.setFont(self.font)
+        self._buttonClient.setFont(self.font)
+        self._buttonEtat.setFont(self.font)
+        self._buttonSimulation.setFont(self.font)
+        self._buttonPause.setFont(self.font)
         
         self._buttonTransaction.clicked.connect(self.genTransaction)
         
@@ -63,6 +73,10 @@ class Interface(QWidget):
         self._listWidgetClient = QListWidget(self)
         self._listWidgetMineur = QListWidget(self)
         self._buttonRetour = QPushButton("Retour")
+
+        self._listWidgetClient.setFont(self.font)
+        self._listWidgetMineur.setFont(self.font)
+        self._buttonRetour.setFont(self.font)
 
         self._buttonRetour.clicked.connect(self.retour)
         self._listWidgetClient.itemDoubleClicked.connect(self.showMCChain)

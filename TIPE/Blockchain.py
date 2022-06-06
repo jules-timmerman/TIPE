@@ -48,7 +48,7 @@ class Blockchain(QObject): # On hérite pour GRAPHICS
             self.validBlocks = returnValue    # On ne rajoute des blocks que lorsqu'on a suffisamment d'éléments par rapport aux autres chaînes et qu'on pas de doublons
             self.alternateFollowingChains = [self.alternateFollowingChains[posFirst]] # On vide les alternates
         
-        #self.updateSignal.emit() # GRAPHICS # J'ai pas l'impression que ca marche
+        self.updateSignal.emit() # GRAPHICS # J'ai pas l'impression que ca marche
 
         return returnValue # Renvoie ce qui a été rajouté
 
