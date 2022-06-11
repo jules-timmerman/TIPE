@@ -1,11 +1,9 @@
 ﻿from PySide6.QtCore import QRectF, Slot, Qt
-from PySide6.QtGui import QColor, QFont, QFontMetricsF, QPainter
+from PySide6.QtGui import QFont, QFontMetricsF, QPainter
 from PySide6.QtWidgets import QGraphicsItem, QGraphicsScene, QStyleOptionGraphicsItem, QWidget
-from shiboken6.Shiboken import delete
 from Block import Block
 from Blockchain import Blockchain
 from Transaction import Transaction
-from PySide6.QtCore import Signal
 
 class BlockchainGraphics(QGraphicsItem):
     FontSize = 10
@@ -18,7 +16,6 @@ class BlockchainGraphics(QGraphicsItem):
     def deleteGraphs(self, blockGraphs):
         for g in blockGraphs:
             self.scene.removeItem(g)
-            #delete(g)
 
     def graphsFromChain(self, blocks, blockGraphs, h, color = Qt.black):  # Methode général de dessin, à partir d'une liste de graphs et de blocs, et de la hauteur. Ne gere par width et height
         # On rajoute les nouveaux
@@ -31,7 +28,6 @@ class BlockchainGraphics(QGraphicsItem):
     
     @Slot()
     def graphsFromValid(self):
-        #print ("\n\nGRAPHS FROM VALID\n\n")
         self.deleteGraphs(self.validBlockGraphs)
         self.graphsFromChain(self.blockchain.validBlocks, self.validBlockGraphs, 0)
         
@@ -40,8 +36,6 @@ class BlockchainGraphics(QGraphicsItem):
 
     @Slot()
     def graphsFromAlternate(self):
-        #print("\n\nGRAPHS FROM ALTERNATE\n\n")
-
         if len(self.blockchain.alternateFollowingChains) > len(self.alternateBlockGraphss): # De nouvelle chaînes, on doit donc ajuster la taille
             self.alternateBlockGraphss += [[] for k in range(len(self.alternateBlockGraphss), len(self.blockchain.alternateFollowingChains))]
         for i in range(len(self.blockchain.alternateFollowingChains)): # Pour chaque chaines
@@ -90,8 +84,6 @@ class BlockchainGraphics(QGraphicsItem):
         return QRectF(self.left, self.top, self.width, self.height)
 
     def paint(self, painter: QPainter, option: QStyleOptionGraphicsItem, widget: QWidget):
-        #painter.setBrush(Qt.green)
-        #painter.drawRect(QRectF(self.left, self.top, self.width, self.height))
         pass
 
 class BlockGraphics(QGraphicsItem):
@@ -134,8 +126,6 @@ class BlockGraphics(QGraphicsItem):
 
 
         painter.drawText(0, 0, "id : " + str(self.block.blockId))
-
-        #print(len(self.block.hashBlock()))
 
         painter.setFont(QFont("Courrier",size))
         painter.drawText(0, 1 * vertIncr, "Hash : " + hex(int(str(self.block.hashBlock()), 2)))

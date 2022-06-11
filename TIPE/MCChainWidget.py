@@ -27,7 +27,7 @@ class MCChainWidget(QWidget): # MC : Miner / Client (marche pour les deux)
     def changeBlockchain(self, bc):
         self.blockchain = bc
         self.blockchainGraphics.blockchain = bc
-        # On netoie à la main alternate avant :
+        # On nettoie à la main alternate avant :
         for g in self.blockchainGraphics.alternateBlockGraphss:
             self.blockchainGraphics.deleteGraphs(g)
 

@@ -14,7 +14,7 @@ from Maladie import Maladie
 
 class Client:
     
-    refIP = "127.0.0.1" # A REMPLIR AVEC LA FUTURE IP DU RASPBERRY EN GROS OU EN TOUT CAS D'UNE ENTITE DE REFERENCE QUI SERA TOUJOURS DANS LA CHAINE
+    refIP = "127.0.0.1"
     refPort = 8000
 
 
@@ -33,10 +33,9 @@ class Client:
         self.privateKey = [keyPair.n, keyPair.d]
 
         self.pathToHopitalList = "listeHopital" + str(port) + ".txt" # Pour les tests utiles pour avoir différent .txt
-        f = open(self.pathToHopitalList, "w") # TODO : EH ?
+        f = open(self.pathToHopitalList, "w")
         f.close()
 
-        #self.p2p = P2P(socket.gethostbyname(socket.gethostname()), port, self.receivedData)
         self.p2p = P2P("127.0.0.1", port, self.receivedData)
         self.p2p.start()
 
@@ -85,17 +84,6 @@ class Client:
                 for l in alternate:
                     if not self.blockchain.alreadyInAlternate(l):
                         self.blockchain.addBlocksToAlternateChain(l)
-            
-            #for b in bc:
-            #    print(b.blockToString())
-            #print("----------")
-            #for bcs in self.blockchain.alternateFollowingChains:
-            #    for b in bcs:
-            #        print(b.blockToString())
-            #    print("****************")
-
-            # TODO : Certains blocs ont l'air d'être dupliqué (celui de départ n'est pas compté) donc à gérer
-
         elif command == "getHospitals":
             return {"command": "respondHospitals", "params": [self.getHospitals()]}
         elif command == "respondHospitals":
@@ -103,13 +91,8 @@ class Client:
         elif command == "newBlock":
             block = Block.stringToBlock(params[0])
             if block.isValidBlock():
-
                 self.blockchain.addBlockToAlternateChain(block)
                 ret = self.blockchain.chainUpdate()
-                #if ret != []:          # TODO: faire marcher ca
-                #    for b in ret:
-                #        self.parseBlock(b)
-
         elif command == "getPerson":
             p = self.getPerson(params[0])
             if p != None:
@@ -127,6 +110,7 @@ class Client:
         elif command == "getTotalClients":
             return {"command": "respondTotalClients", "params": [self.getTotalClients()]}
         elif command == "respondTotalClients":
+            # Ne fonctionne pas...
             # TODO : refaire un peu ici pas très propre
             # Proposition : on met l'ID max puis après l'appel dans le constructeur on fait la suite dans le HopitalList
             if self.idClient == -1: # Pour ignorer les requêtes suivant notre première réponse (supposée correcte)
@@ -201,11 +185,12 @@ class Client:
         return size
 
     def noticeNew(self, newId, newPK):
-        s = '/' * newId + newPK # On arnaque en mettant comme si la liste recu d'hopitals était rempli uniquement du nouveau au bon endroit
+        s = '/' * newId + newPK
         self.receiveAllHospitals(s)
 
     # CLIENT FUNCTIONS
 
+    # Pas utilisé
     def parseBlock(self, block):
         """Lit les transactions dans un bloc donné et met à jour la liste des personnes"""
         listTrans = block.transactions # Liste des transactions du blocs

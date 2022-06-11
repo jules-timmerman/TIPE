@@ -2,7 +2,6 @@ from PySide6.QtCore import QObject, Signal
 from Block import Block
 
 class Blockchain(QObject): # On hérite pour GRAPHICS
-    
 
     N = 5 # Nombre de transactions par blocs (temporaire)
     NAvance = 2 # Nombre de blocs d'avance pour valider
@@ -14,21 +13,18 @@ class Blockchain(QObject): # On hérite pour GRAPHICS
 
         self.validBlocks = [Block(0 ,0 ,[] ,0)]      # blocs 100% sûr qui peuvent être pris en compte
         # Contient différentes alternatives de blockchain 
-        # On va mettre toutes la blockchain dedans pour faciliter les comparaisons de taille
+        # On va mettre toute la blockchain dedans pour faciliter les comparaisons de taille
         self.alternateFollowingChains = [[Block(0 ,0 ,[] ,0)]]  
 
 
     def alreadyInAlternate(self,l) :
-        #if len(l) == 1: # Bizarre ca, ca devait sûrement être le bloc origine mais bon
-        #    return True
         for liste in self.alternateFollowingChains :
             if liste == l :
                 return True      
         return False
 
     # Met à jour valid et vide alternate si suffisament d'avance
-    # TODO : Peut-être ne pas vider alternate
-    def chainUpdate(self) : # TODO : revérifier le code, peut-être gérer la possibilité d'avoir une toute nouvelle chaîne qui est valide, en redéfinissant valid plutôt que de juste rajouter
+    def chainUpdate(self) :
         lengthSecond = 0        # Longueur de la 2ème liste la plus longue 
         maxLength = 0
         posFirst = 0
@@ -48,7 +44,7 @@ class Blockchain(QObject): # On hérite pour GRAPHICS
             self.validBlocks = returnValue    # On ne rajoute des blocks que lorsqu'on a suffisamment d'éléments par rapport aux autres chaînes et qu'on pas de doublons
             self.alternateFollowingChains = [self.alternateFollowingChains[posFirst]] # On vide les alternates
         
-        self.updateSignal.emit() # GRAPHICS # J'ai pas l'impression que ca marche
+        self.updateSignal.emit() # GRAPHICS
 
         return returnValue # Renvoie ce qui a été rajouté
 
@@ -57,7 +53,7 @@ class Blockchain(QObject): # On hérite pour GRAPHICS
         return self.validBlocks[-1]
 
 
-    def addBlockToAlternateChain(self,block) : # TODO : on abandonne les blocs qui sont plus loins ? Peut-être les garder au cas où
+    def addBlockToAlternateChain(self,block) :
         Id = block.blockId
         if Id != 0 : # Juste pas le bloc origine
             for (i,val) in enumerate(self.alternateFollowingChains) : # On regarde chacune des potentielles chaînes
@@ -117,22 +113,6 @@ class Blockchain(QObject): # On hérite pour GRAPHICS
         resStr += self.validBlocksToString()
 
         return resStr
-
-    #@staticmethod
-    #def stringToBlockchain(string) : # a priori jamais utilisé
-
-    #    split = string.split("µ")
-
-    #    alternateFollowingChains = Blockchain.stringToAlternateFollowingChains(split[0])
-
-    #    valibBlocks = Blockchain.stringToValidBlocks(split[1])
-
-    #    blockchain = Blockchain()
-
-    #    blockchain.alternateFollowingChains = alternateFollowingChains
-    #    blockchain.validBlocks = valibBlocks
-        
-    #    return blockchain
 
     @staticmethod
     def stringToBlocks(string):

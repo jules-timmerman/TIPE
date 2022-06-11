@@ -25,6 +25,3 @@ class Simulation:
         trans = Transaction.randomTrans(self.clients)
         self.clients[trans.clientId].sendTrans(trans)
         return trans
-
-
-

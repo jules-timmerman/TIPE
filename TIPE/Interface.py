@@ -1,7 +1,6 @@
 from PySide6.QtGui import QFont
-from PySide6.QtWidgets import *
+from PySide6.QtWidgets import QGridLayout, QHBoxLayout, QListWidget, QPushButton, QSizePolicy, QWidget 
 from MCListWidgetItem import MCListWidgetItem
-from BlockchainHUD import BlockchainGraphics
 from MCChainWidget import MCChainWidget
 from Blockchain import Blockchain
 
@@ -49,9 +48,6 @@ class Interface(QWidget):
         self._buttonPause.setFont(self.font)
         
         self._buttonTransaction.clicked.connect(self.genTransaction)
-        
-        #self._buttonMineur.clicked.connect(self.threadGenMineur)
-        #self._buttonClient.clicked.connect(self.threadGenClient)
         
         self._buttonMineur.clicked.connect(self.genMineur)
         self._buttonClient.clicked.connect(self.genClient)
@@ -152,15 +148,3 @@ class Interface(QWidget):
         self._mainLayout.replaceWidget(self._etatWidget, self._mainMenuWidget)
         self._mainMenuWidget.show()
         self._etatWidget.hide()
-
-
-
-
-
-
-
-
-
-
-
-

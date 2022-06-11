@@ -1,6 +1,5 @@
 from p2pnetwork.node import Node
 import time
-from requests import get
 
 
 def generateCommandId(content):
@@ -12,11 +11,6 @@ class P2P (Node):
 
         self.callbackMessage = callbackMessage
         self.commandSendHistory = [] # Liste avec des ids de commandes pour éviter les boucles
-        # l'IP global de l'initiateur pour lui répondre
-        # On supposera ici que tout les ports sont ouverts et que ce sont les mêmes en extérieur et intérieur
-        #self.globalIP = get('https://api.ipify.org').text
-        #self.globalIP = "127.0.0.1"    # Normalement plus besoin ici
-
 
     def outbound_node_connected(self, connected_node):
         print("outbound_node_connected: " + connected_node.host)
@@ -31,8 +25,6 @@ class P2P (Node):
         print("outbound_node_disconnected: " + connected_node.host)
 
     def node_message(self, connected_node, data):
-        # print("node_message from " + str(connected_node.port) + ": " + str(data) + "\n")
-
         # Data un dictionnaire avec id: l'id unique pour éviter les boucles et data: le contenu du message
         # globalIp: l'adresse de retour de l'initiateur / port: le port
         id = data["id"]
@@ -65,7 +57,7 @@ class P2P (Node):
                             self.send_to_node(n, {"id": id, "historyBuffer":historyBuffer[0:-1], "content": s})
                         else:
                             self.send_to_node(n, {"id": generateCommandId(s), "historyBuffer":historyBuffer[0:-1], "content": s})
-                            # On génère un nouvel id lié à la réponse s
+                            # On génère un nouvel id lié à la réponse
                             # On enlève la node à qui on envoie la dernière node du buffer (à savoir elle même)
 
         
@@ -82,7 +74,6 @@ class P2P (Node):
     def sendData(self, content):
         commandId = generateCommandId(content)
         self.commandSendHistory += [commandId]     # On ajoute aussi l'ID pour que le mec de base renvoit
-        #self.commandSendHistory += id      # Qu'est ce que c'est que ce bordel
 
         print(str(self.port) + " : Sending : " + str(content) + "\n")
 

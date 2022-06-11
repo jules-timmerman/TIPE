@@ -13,7 +13,7 @@ import random
 
 class Miner:
 
-    refIP = "127.0.0.1" # A REMPLIR AVEC LA FUTURE IP DU RASPBERRY EN GROS OU EN TOUT CAS D'UNE ENTITE DE REFERENCE QUI SERA TOUJOURS DANS LA CHAINE
+    refIP = "127.0.0.1"
     refPort = 9000
 
 
@@ -30,7 +30,7 @@ class Miner:
         self.idToMine = 0 # id du prochain bloc à miner (initialiser à 0 car incrémenter dans createThreadAndStart
         self.newFound = False # Ce qui nous permettra de couper le Thread en cours
 
-        self.listPerson = [] # Liste de personne (pas forcément nécessaire mais la banane de TF2)
+        self.listPerson = []
 
         self.pathToHopitalList = "listeHopital" + str(port) + ".txt" # Pour les tests utiles pour avoir différent .txt
         f = open(self.pathToHopitalList, "w")
@@ -47,7 +47,7 @@ class Miner:
         self.sendData("getHospitals") # On récupère la liste avec les clés
         time.sleep(2)
         self.sendData("getTotalClients") # On récupère le nombre total de client (et donc notre id à nous)
-        time.sleep(2) # TODO : EH ? On a pas besoin d'id en tant que mineur ? En plus je crois qu'on ne gère jamais la réponse
+        time.sleep(2) 
 
         self.miningThread = threading.Thread(target=self.block)
 
@@ -81,17 +81,6 @@ class Miner:
                 for l in alternate:
                     if not self.blockchain.alreadyInAlternate(l):
                         self.blockchain.addBlocksToAlternateChain(l)
-            
-            #for b in bc:
-            #    print(b.blockToString())
-            #print("----------")
-            #for bcs in self.blockchain.alternateFollowingChains:
-            #    for b in bcs:
-            #        print(b.blockToString())
-            #    print("****************")
-
-            # TODO : Certains blocs ont l'air d'être dupliqué (celui de départ n'est pas compté) donc à gérer
-
         elif command == "getHospitals":
             return {"command": "respondHospitals", "params": [self.getHospitals()]}
         elif command == "respondHospitals":
@@ -99,22 +88,16 @@ class Miner:
         elif command == "newBlock":
             block = Block.stringToBlock(params[0])
             print(str(self.port) + " VALID : " + str(block.isValidBlock()))
-            if block.isValidBlock(): # TODO : Ca va falloir changé parce que ca contamine
+            if block.isValidBlock():
                 if block.blockId == self.blockchain.getLastValidBlock().blockId + 1: # Le nouveau bloc recu est le même que celui sur lequel on travaillait
                     print(str(self.port) + " received SAME that the one mining")
-                    self.stopMining()   # TODO : En vrai il faudrait ne pas supprimer les transactions sur lesquels on travaillait pour pouvoir plutôt gérer sur les transactions présentes ou pas dans le bloc recu que l'id strictement
+                    self.stopMining()
                     
                     self.lastMinedBlock = block
-                    #self.idToMine += 1     # Gerer dans createThread...
                     if len(self.transToBlock) >= 5:
                         self.createAndStartThread()
                 self.blockchain.addBlockToAlternateChain(block)
                 self.blockchain.chainUpdate()
-
-
-                #if newLength > oldLength: # Pour pouvoir parse les nouveaux blocs valides  # EH ? (avant c'etait commente)
-                #    for i in range(oldLength, newLength):
-                #        self.parseBlock(self.blockchain.validBlocks[i])
         elif command == "getPerson":
             p = self.getPerson(params[0])
             if p != None:
@@ -194,7 +177,7 @@ class Miner:
         return size
 
     def noticeNew(self, newId, newPK):
-        s = '/' * newId + newPK # On arnaque en mettant comme si la liste recu d'hopitals était rempli uniquement du nouveau au bon endroit
+        s = '/' * newId + newPK
         self.receiveAllHospitals(s)
     
     
@@ -203,8 +186,8 @@ class Miner:
     def addTransToBlock(self, trans):
         self.transToBlock += [trans]
         if len(self.transToBlock) >= 5 and not self.miningThread.is_alive(): # On ne veut pas miner deux blocs à la fois
-            self.blockchain.chainUpdate() # Pourquoi on update avant ? Au cas où j'imagine (ca fait pas de mal en soit)
-            self.createAndStartThread()   # Y'avait sûrement une raison quand même. La banane le retour
+            self.blockchain.chainUpdate()
+            self.createAndStartThread()
     
     def stopMining(self):
         print(str(self.port) + " mining thread : " + str(self.miningThread.is_alive()))
@@ -230,7 +213,6 @@ class Miner:
         i = random.randint(0,10**6)
         s = "0" * Block.NZeros
         while (hashTemp[0:Block.NZeros] != s) and (not self.shouldStop()):
-            #print(i)
             i += 1
             hashTemp = blockTemp.hashBlockWithPOW(i)
 
@@ -241,13 +223,12 @@ class Miner:
             print("\n\n" + str(self.port) + " A TROUVE LA POW\n\n")
             blockTemp.proofOfWork = i
 
-            #self.idToMine += 1 # Geré dans createThread...
             self.lastMinedBlock = blockTemp
             self.blockchain.addBlockToAlternateChain(blockTemp)
-            self.blockchain.chainUpdate() # Il va falloir update (ca coûte rien en tout cas et ca évite des désync entre les valids)
-            self.sendBlock(blockTemp)       # On aurait vraiment dû mettre l'update dans add...
+            self.blockchain.chainUpdate()
+            self.sendBlock(blockTemp)       
 
-    def sendBlock(self, blockTemp): # Envoie le bloc au reste de réseau (A FAIRE PLUS TARD) (c'est fait non ?)
+    def sendBlock(self, blockTemp): # Envoie le bloc au reste de réseau
         self.sendData("newBlock", [blockTemp.blockToString()])
         if len(self.transToBlock) >= 5:
             self.createAndStartThread()
@@ -273,6 +254,6 @@ class Miner:
         f.close()
 
     def createAndStartThread(self):
-        self.idToMine += 1 # TODO : peut-être que ca peut être bizarre d'augmenter forcément, vérifier comment idToMine est géré
+        self.idToMine += 1
         self.miningThread = threading.Thread(target=self.block)
         self.miningThread.start()
