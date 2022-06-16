@@ -58,7 +58,7 @@ class P2P (Node):
 
             if s != None : # Si s != None alors callbackMessage a retourné et on va donc devoir renvoyer une réponse de notre part: 
                 targetId = historyBuffer[-1] # La personne à qui on doit envoyer (le dernier ajouter dans l'ordre)
-                for n in self.all_nodes: # Normalment on a pas de copie de node
+                for n in self.all_nodes: # Normalement on a pas de copie de node
                     if n.id == targetId:
                         print(str(self.port) + " : Responding to : " + str(n.port) + " with " + str(s)  + "\n")
                         if s == content: # C'était alors une réponse et on l'envoie au prochain mec de la chaîne de réponse
